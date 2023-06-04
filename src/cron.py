@@ -1,18 +1,18 @@
 import asyncio
 
 import pycron
-from tortoise import Tortoise
+# from tortoise import Tortoise
 
 from src.constants import TORTOISE_CONFIG
 
 
 async def main():
-    await Tortoise.init(config=TORTOISE_CONFIG)
-    await Tortoise.generate_schemas()
+    # await Tortoise.init(config=TORTOISE_CONFIG)
+    # await Tortoise.generate_schemas()
 
     pycron.start()
 
-    await Tortoise.close_connections()
+    # await Tortoise.close_connections()
 
 
 if __name__ == '__main__':
