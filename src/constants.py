@@ -1,20 +1,18 @@
 from aiogram import Dispatcher, Bot
+from sqlmodel import create_engine
 
 from src.config import Config
+
+version = 'v0.23'
+
+ADMINS = (
+    897276284,  # khivus
+    448565207   # boryaxta
+)
 
 config = Config()
 bot = Bot(token=config.API_TOKEN, parse_mode='HTML')
 dp = Dispatcher()
 
-version = 'v0.22'
-admin_id = 897276284
-
-# TORTOISE_CONFIG = {
-#     'connections': {'default': 'sqlite://resources//db.sqlite'},
-#     'apps': {
-#         'models': {
-#             'models': ['src.models'],
-#             'default_connection': 'default'
-#         }
-#     }
-# }
+db_path = "resources/db.db"
+engine = create_engine("sqlite:///" + db_path)

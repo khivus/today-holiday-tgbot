@@ -1,25 +1,24 @@
 import asyncio
 import logging
 
-# from tortoise import Tortoise
+from sqlmodel import SQLModel
 
-from src.constants import dp, bot #, TORTOISE_CONFIG
+from src.constants import dp, bot, engine
 from src.routers import main_router, admin_router
+from src.models import __init__
+
 
 logging.basicConfig(level=logging.INFO)
 
 
 async def main():
-    # await Tortoise.init(config=TORTOISE_CONFIG)
-    # await Tortoise.generate_schemas()
+    SQLModel.metadata.create_all(engine)
 
     dp.include_router(main_router)
     dp.include_router(admin_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
-
-    # await Tortoise.close_connections()
 
 
 if __name__ == '__main__':

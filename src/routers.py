@@ -1,8 +1,9 @@
 from aiogram import Router, F
 
-from src.constants import admin_id
+from src.constants import ADMINS
 
 main_router = Router()
 
 admin_router = Router()
-admin_router.message.filter(F.from_user.id == admin_id)
+for admin in ADMINS:
+    admin_router.message.filter(F.from_user.id == admin)
