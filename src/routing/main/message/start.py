@@ -13,6 +13,6 @@ async def process_start(message: types.Message) -> None:
     # user.uses += 1
     # await user.save()
     ans_text = await site_parser.parse_site()
-    await message.answer(text=ans_text)
-    
+    # await message.answer(text=ans_text)
+
     # await message.answer(text='Привет! Я рассылаю снюс! Подпишись или иди нахуй)')

@@ -3,7 +3,7 @@ from sqlmodel import create_engine
 
 from src.config import Config
 
-version = 'v0.23'
+version = 'v0.24'
 
 ADMINS = (
     897276284,  # khivus
@@ -14,5 +14,5 @@ config = Config()
 bot = Bot(token=config.API_TOKEN, parse_mode='HTML')
 dp = Dispatcher()
 
-db_path = "resources/db.db"
+db_path = "resources/database.db"
 engine = create_engine("sqlite:///" + db_path)
