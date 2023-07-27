@@ -12,7 +12,9 @@ async def process_start(message: types.Message) -> None:
     # await Settings.get_or_create(user=user, defaults={})
     # user.uses += 1
     # await user.save()
-    ans_text = await site_parser.parse_site()
-    # await message.answer(text=ans_text)
+    if await site_parser.parse_site():
+        await message.answer(text='Hello!')
 
     # await message.answer(text='Привет! Я рассылаю снюс! Подпишись или иди нахуй)')
+
+    # TODO: Сделать нормальный старт, который сохраняет пользователя в БД
