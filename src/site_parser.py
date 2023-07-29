@@ -67,8 +67,8 @@ async def parse_site():
     #     statement = session.exec(select(Holiday)).where(
     #         Holiday.day == day).where(Holiday.month == month)
     #     results = session.exec(statement)
-    #     # holidays = results.all
-    #     session.delete(results)
+    #     for holiday in results:
+    #         session.delete(holday)
     #     session.commit()
 
     with Session(engine) as session:
