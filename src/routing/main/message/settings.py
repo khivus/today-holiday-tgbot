@@ -12,3 +12,5 @@
 #     keyboard = build_settings_keyboard()
 
 #     await message.answer(text='List of settings to change', reply_markup=keyboard)
+
+# TODO A lot of work
