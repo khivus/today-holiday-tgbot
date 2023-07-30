@@ -3,7 +3,7 @@ from sqlmodel import create_engine
 
 from src.config import Config
 
-version = 'v0.24'
+version = 'v0.25'
 
 ADMINS = (
     897276284,  # khivus

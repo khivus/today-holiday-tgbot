@@ -1,8 +1,12 @@
 import aiohttp
 import re
+import datetime
+
 from bs4 import BeautifulSoup
+from sqlmodel import Session, select
 from user_agent import generate_user_agent
-from src.models.holiday import HolidayType
+from src.models.holiday import HolidayType, Holiday
+from src.__main__ import engine
 
 
 async def parse_site():
@@ -19,42 +23,58 @@ async def parse_site():
     i = 0
 
     for element in listl:
-        attributes = element.attrs
-        dicts = [{'class': ['hr-hr_leto']}, {'class': ['hr-hr_vesna']},
-                 {'class': ['hr-hr_winter']}, {'class': ['hr-hr_osen']}, {'id': 'prin'}]
-        if attributes in dicts:
-            i += 1
+        if (element.name == 'div'):
+            attributes = element.attrs
 
-        elif element.find('span', itemprop='text'):
-            holiday_name = element.find('span', itemprop='text').text
+            dicts_separator = [{'class': ['hr-hr_leto']}, {'class': ['hr-hr_vesna']},
+                               {'class': ['hr-hr_winter']}, {'class': ['hr-hr_osen']}, {'id': 'prin'}]
+            dicts_holidays = [{'itemprop': 'acceptedAnswer', 'itemscope': '', 'itemtype': 'http://schema.org/Answer'},
+                              {'itemprop': 'suggestedAnswer', 'itemscope': '', 'itemtype': 'http://schema.org/Answer'}]
 
-            years = element.find('span', class_='super')
-            if years is not None:
-                years_passed = str(years.text)
-            else:
-                years_passed = None
+            if attributes in dicts_separator:
+                i += 1
 
-            match i:
-                case 1:
-                    holiday_type = HolidayType.church
-                case 2:
-                    holiday_type = HolidayType.country_specific
-                case 3:
-                    holiday_type = HolidayType.name_day
-                case default:
-                    holiday_type = HolidayType.normal
+            elif attributes in dicts_holidays:
+                holiday_name = element.find('span', itemprop='text').text
 
-            if re.match(r'(международный|всемирный|всенародный).*', holiday_name.lower()):
-                holiday_type = HolidayType.international
+                years = element.find('span', class_='super')
+                if years is not None:
+                    years_passed = str(years.text)
+                else:
+                    years_passed = None
 
-            # elif re.match(r'.*(славянский|святого|иконы|памяти).*', holiday_low):
-            #     holiday_type = HolidayType.church
-            # elif re.match(r'.* - .*', holiday_low):
-            #     holiday_type = HolidayType.country_specific
-            # elif re.match(r'.*(именины|плакальщик).*', holiday_low):
-            #     holiday_type = HolidayType.name_day
+                match i:
+                    case 1:
+                        holiday_type = HolidayType.church
+                    case 2:
+                        holiday_type = HolidayType.country_specific
+                    case 3:
+                        holiday_type = HolidayType.name_day
+                    case default:
+                        holiday_type = HolidayType.normal
 
-            elements.append((holiday_type, holiday_name, years_passed))
-            print(holiday_type, '|', holiday_name, '|', years_passed)
+                if re.match(r'(международный|всемирный|всенародный).*', holiday_name.lower()):
+                    holiday_type = HolidayType.international
 
-    # return elements
+                elements.append((holiday_name, holiday_type, years_passed))
+
+    today = datetime.date.today()
+    day = today.day
+    month = today.month
+
+    # TODO: Удаление праздников этого дня, перед их добавлением (проверить работоспособность)
+    with Session(engine) as session:
+        statement = session.exec(select(Holiday)).where(Holiday.day == day, Holiday.month == month)
+        results = session.exec(statement)
+        for holiday in results:
+            session.delete(holday)
+        session.commit()
+
+    with Session(engine) as session:
+        for holdiday_element in elements:
+            holiday = Holiday(
+                name=holdiday_element[0], type=holdiday_element[1], years_passed=holdiday_element[2], day=day, month=month)
+            session.add(holiday)
+        session.commit()
+
+    return True
