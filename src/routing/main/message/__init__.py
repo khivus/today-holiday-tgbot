@@ -3,3 +3,5 @@ from . import (
     holidays,
     settings
 )
+
+# TODO Make /about command

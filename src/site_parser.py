@@ -62,12 +62,11 @@ async def parse_site():
     day = today.day
     month = today.month
 
-    # TODO: Удаление праздников этого дня, перед их добавлением (проверить работоспособность)
     with Session(engine) as session:
-        statement = session.exec(select(Holiday)).where(Holiday.day == day, Holiday.month == month)
-        results = session.exec(statement)
+        results = session.exec(select(Holiday).where(
+            Holiday.day == day).where(Holiday.month == month))
         for holiday in results:
-            session.delete(holday)
+            session.delete(holiday)
         session.commit()
 
     with Session(engine) as session:

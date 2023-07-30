@@ -3,7 +3,9 @@ import asyncio
 import pycron
 # from tortoise import Tortoise
 
-from src.constants import TORTOISE_CONFIG
+# from src.constants import TORTOISE_CONFIG
+
+# TODO Connection to sqlmodel
 
 
 async def main():

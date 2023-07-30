@@ -18,3 +18,4 @@ async def process_start(message: types.Message) -> None:
     # await message.answer(text='Привет! Я рассылаю снюс! Подпишись или иди нахуй)')
 
     # TODO: Сделать нормальный старт, который сохраняет пользователя в БД
+# TODO Start command will add user only if it isn't in db. If user in db bot will use command /holidays
