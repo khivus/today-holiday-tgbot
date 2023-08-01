@@ -5,8 +5,9 @@ import datetime
 from bs4 import BeautifulSoup
 from sqlmodel import Session, select
 from user_agent import generate_user_agent
+
 from src.models.holiday import HolidayType, Holiday
-from src.__main__ import engine
+from src.constants import engine
 
 
 async def parse_site():
@@ -76,4 +77,5 @@ async def parse_site():
             session.add(holiday)
         session.commit()
 
+    print('Site parsed successfully.')
     return True
