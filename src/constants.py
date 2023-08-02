@@ -4,7 +4,7 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version and create new branch for it!
-version = 'v0.26'
+version = 'v0.27'
 
 ADMINS = (
     897276284,  # khivus

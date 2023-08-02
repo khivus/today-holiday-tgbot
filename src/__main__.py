@@ -1,13 +1,12 @@
 import asyncio
 import logging
-import aioschedule
 
 from sqlmodel import SQLModel
 
 from src.constants import dp, bot, engine
 from src.routers import main_router, admin_router
 from src.models import __init__
-from src.sheduler import scheduler
+from src.scheduler import scheduler
 
 
 logging.basicConfig(level=logging.INFO)

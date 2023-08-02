@@ -1,21 +1,24 @@
-# from aiogram import types
-# from aiogram.filters import Command
-# from src import site_parser
+from aiogram import types
+from aiogram.filters import Command
+from sqlmodel import Session, select
 
-# # from src.models import User, Settings
-# from src.routers import main_router
+from src.constants import engine
+from src.models.chat import Chat
+from src.routers import main_router
+from src.routing.main.message.holidays import process_holidays
 
 
-# @main_router.message(Command('start'))
-# async def process_start(message: types.Message) -> None:
-#     # user, _ = await User.get_or_create(user_id=message.from_user.id)
-#     # await Settings.get_or_create(user=user, defaults={})
-#     # user.uses += 1
-#     # await user.save()
-#     # if await site_parser.parse_site():
-#     #     await message.answer(text='Hello!')
+@main_router.message(Command('start'))
+async def process_start(message: types.Message) -> None:
+    with Session(engine) as session:
+        if not session.exec(select(Chat).where(Chat.id == message.chat.id)).all():
+            user = Chat(id=message.chat.id)
+            session.add(user)
+            session.commit()
+            reply_text = 'User added'
 
-#     # await message.answer(text='Привет! Я рассылаю снюс! Подпишись или иди нахуй)')
+        else:
+            await process_holidays(message)
+            reply_text = 'Holiday list'
 
-#     # TODO: Сделать нормальный старт, который сохраняет пользователя в БД
-# # TODO Start command will add user only if it isn't in db. If user in db bot will use command /holidays
+    await message.answer(text=reply_text)
