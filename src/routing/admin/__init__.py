@@ -1,1 +1,4 @@
-# TODO Make /stats command
+from . import (
+    run_parser,
+    stats
+)

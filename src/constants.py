@@ -4,12 +4,14 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version and create new branch for it!
-version = 'v0.27'
+version = 'v0.28'
 
-ADMINS = (
-    897276284,  # khivus
-    448565207   # boryaxta
-)
+ADMIN = 897276284
+
+# ADMINS = (
+#     897276284,  # khivus
+#     448565207   # boryaxta
+# )
 
 config = Config()
 bot = Bot(token=config.API_TOKEN, parse_mode='HTML')

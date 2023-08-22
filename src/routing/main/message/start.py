@@ -12,13 +12,10 @@ from src.routing.main.message.holidays import process_holidays
 async def process_start(message: types.Message) -> None:
     with Session(engine) as session:
         if not session.exec(select(Chat).where(Chat.id == message.chat.id)).all():
-            user = Chat(id=message.chat.id)
-            session.add(user)
+            chat = Chat(id=message.chat.id)
+            session.add(chat)
             session.commit()
-            reply_text = 'User added'
+            await message.answer(text='User added')
 
         else:
             await process_holidays(message)
-            reply_text = 'Holiday list'
-
-    await message.answer(text=reply_text)
