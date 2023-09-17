@@ -3,8 +3,8 @@ from sqlmodel import create_engine
 
 from src.config import Config
 
-# TODO Don't forget to change version and create new branch for it!
-version = 'v0.28'
+# TODO Don't forget to change version!
+version = 'v0.29'
 
 ADMIN = 897276284
 

@@ -19,3 +19,6 @@ async def process_start(message: types.Message) -> None:
 
         else:
             await process_holidays(message)
+
+# TODO авторассылка
+# TODO поиск праздников

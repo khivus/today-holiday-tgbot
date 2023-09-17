@@ -1,5 +1,5 @@
 import aiohttp
-import re
+# import re
 import datetime
 
 from bs4 import BeautifulSoup
@@ -45,17 +45,14 @@ async def parse_site():
                     years_passed = None
 
                 match i:
-                    case 1:
-                        holiday_type = HolidayType.church
-                    case 2:
-                        holiday_type = HolidayType.country_specific
-                    case 3:
-                        holiday_type = HolidayType.name_day
-                    case default:
-                        holiday_type = HolidayType.normal
+                    case 0: holiday_type = HolidayType.normal
+                    case 1: holiday_type = HolidayType.church
+                    case 2: holiday_type = HolidayType.country_specific
+                    case 3: holiday_type = HolidayType.name_day
+                    case default: raise Exception('Holiday type index overflow!')
 
-                if re.match(r'(международный|всемирный|всенародный).*', holiday_name.lower()):
-                    holiday_type = HolidayType.international
+                # if re.match(r'(международный|всемирный|всенародный).*', holiday_name.lower()):
+                #     holiday_type = HolidayType.international
 
                 elements.append((holiday_name, holiday_type, years_passed))
 

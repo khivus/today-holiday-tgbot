@@ -1,7 +1,8 @@
 from . import (
     start,
     holidays,
-    settings
+    settings,
+    settings_action
 )
 
-# TODO Make /about command
+# TODO Make /about and /search command
