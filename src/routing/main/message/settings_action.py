@@ -54,9 +54,9 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
         elif callback_data.type == SettingType.RESET:
             chat.mailing_enabled = False
             chat.mailing_time = 10
-            chat.send_remembrance_days = True
-            chat.send_name_days = True
             chat.send_church_holidays = True
+            chat.send_country_specific = True
+            chat.send_name_days = True
 
             reply_markup = build_settings_keyboard()
             msg = get_text(
