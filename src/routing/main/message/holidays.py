@@ -11,7 +11,7 @@ from src.routers import main_router
 from src.constants import engine
 
 
-def build_pages(message: types.Message):
+def build_pages(chat_id: int):
 
     today = datetime.date.today()
     day = today.day
@@ -25,7 +25,7 @@ def build_pages(message: types.Message):
         results = session.exec(select(Holiday).where(
             Holiday.day == day).where(Holiday.month == month))
         chat = session.exec(select(Chat).where(
-            Chat.id == message.chat.id)).one()
+            Chat.id == chat_id)).one()
 
         for element in results:
             holiday_text = f'- {element.name}'
@@ -65,7 +65,7 @@ async def process_holidays(message: types.Message) -> None:
         session.add(chat)
         session.commit()
 
-    pages = build_pages(message=message)
+    pages = build_pages(chat_id=message.chat.id)
     keyboard = build_pages_keyboard(current_page_index=0)
 
     if len(pages[0]) != 0:

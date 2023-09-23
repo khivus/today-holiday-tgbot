@@ -7,7 +7,7 @@ from src.routing.main.message.holidays import build_pages
 
 @main_router.callback_query(PagesCallbackData.filter())
 async def process_change_pages_callback(query: types.CallbackQuery, callback_data: PagesCallbackData):
-    pages = build_pages(message=query.message)
+    pages = build_pages(chat_id=query.message.chat.id)
     max_index = len(pages)
     page_index = callback_data.current_page_index
     new_page_index = min(max(page_index, 0), max_index-1)
