@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from src.constants import engine
 from src.models.chat import Chat
 from src.routers import main_router
-from src.routing.main.message.holidays import process_holidays
+from src.routing.main.holidays import process_holidays
 
 
 @main_router.message(Command('start'))

@@ -6,9 +6,7 @@ from src.keyboards.hours import HourCallbackData, build_hours_keyboard
 from src.keyboards.settings import SettingType, SettingsCallbackData, build_settings_keyboard
 from src.models.chat import Chat
 from src.routers import main_router
-from src.routing.main.message.settings import get_text
-
-# TODO: Боря работай
+from src.routing.main.settings import get_text
 
 
 @main_router.callback_query(SettingsCallbackData.filter())

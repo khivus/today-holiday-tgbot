@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from src.constants import engine, bot
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
-from src.routing.main.message.holidays import build_pages
+from src.routing.main.holidays import build_pages
 
 
 async def send_scheluded_holidays_message():

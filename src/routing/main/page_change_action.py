@@ -2,7 +2,7 @@ from aiogram import types
 
 from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
 from src.routers import main_router
-from src.routing.main.message.holidays import build_pages
+from src.routing.main.holidays import build_pages
 
 
 @main_router.callback_query(PagesCallbackData.filter())
