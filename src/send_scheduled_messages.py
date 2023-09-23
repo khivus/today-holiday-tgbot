@@ -17,10 +17,16 @@ async def send_scheluded_holidays_message():
         for chat in chats:
             chat.uses += 1
             session.add(chat)
+            # TODO Bor вот здесь нужно в начале/конце, что-то красивое писать
+            # Это рассылка, так что можно указывать это
+            # Можно писать номер страницы, день и т.д.
+            # Спрашивай, помогу
             message_text = build_pages(chat_id=chat.id)[0]
             keyboard = build_pages_keyboard(current_page_index=0)
             message = await bot.send_message(chat_id=chat.id, text=message_text, reply_markup=keyboard)
             if message:
                 success += 1
-        print(f'{success} / {len(chats)} scheduled messages was send.')
+        if len(chats) != 0:
+            print(
+                f'At hour {hour}: {success} / {len(chats)} scheduled messages was send.')
         session.commit()

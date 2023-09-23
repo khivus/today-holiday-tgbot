@@ -9,6 +9,7 @@ from src.constants import engine
 
 
 def get_text(chat: Chat, additional_text: str = ''):
+    # TODO Bor
     text = f'{additional_text}' \
         f'Your current settings and info:\n' \
         f'<code>Id</code> = {chat.id}\n' \

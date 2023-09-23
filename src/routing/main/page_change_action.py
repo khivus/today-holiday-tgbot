@@ -7,6 +7,9 @@ from src.routing.main.holidays import build_pages
 
 @main_router.callback_query(PagesCallbackData.filter())
 async def process_change_pages_callback(query: types.CallbackQuery, callback_data: PagesCallbackData):
+    # TODO Bor вот здесь нужно в начале/конце, что-то красивое писать
+    # Можно писать номер страницы, день и т.д.
+    # Спрашивай, помогу
     pages = build_pages(chat_id=query.message.chat.id)
     max_index = len(pages)
     page_index = callback_data.current_page_index

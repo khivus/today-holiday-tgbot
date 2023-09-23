@@ -18,7 +18,7 @@ class SettingsCallbackData(CallbackData, prefix='generate'):
 
 def build_settings_keyboard():
     builder = InlineKeyboardBuilder()
-
+    # TODO Bor x6
     builder.button(text='mailing_enabled', callback_data=SettingsCallbackData(
         type=SettingType.MAILING_ENABLED))
     builder.button(text='mailing_time', callback_data=SettingsCallbackData(

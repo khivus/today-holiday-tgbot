@@ -15,6 +15,7 @@ async def process_start(message: types.Message) -> None:
             chat = Chat(id=message.chat.id)
             session.add(chat)
             session.commit()
+            # TODO Bor
             await message.answer(text='User added')
 
         else:

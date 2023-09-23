@@ -64,7 +64,9 @@ async def process_holidays(message: types.Message) -> None:
         chat.uses += 1
         session.add(chat)
         session.commit()
-
+    # TODO Bor вот здесь нужно в начале/конце, что-то красивое писать
+    # Можно писать номер страницы, день и т.д.
+    # Спрашивай, помогу
     pages = build_pages(chat_id=message.chat.id)
     keyboard = build_pages_keyboard(current_page_index=0)
 

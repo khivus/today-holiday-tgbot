@@ -20,17 +20,20 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
         if callback_data.type == SettingType.MAILING_ENABLED:
             chat.mailing_enabled = not chat.mailing_enabled
             reply_markup = build_settings_keyboard()
+            # TODO Bor
             msg = get_text(
                 additional_text=f'Mailing is <code>{"enabled" if chat.mailing_enabled else "disabled"}</code>.\n', chat=chat)
             session.add(chat)
 
         elif callback_data.type == SettingType.MAILING_TIME:
+            # TODO Bor
             msg = 'Choose mailing hour'
             reply_markup = build_hours_keyboard()
 
         elif callback_data.type == SettingType.SEND_CHURCH_HOLIDAYS:
             chat.send_church_holidays = not chat.send_church_holidays
             reply_markup = build_settings_keyboard()
+            # TODO Bor
             msg = get_text(
                 additional_text=f'Church holidays are <code>{"enabled" if chat.send_church_holidays else "disabled"}</code>.\n', chat=chat)
             session.add(chat)
@@ -38,6 +41,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
         elif callback_data.type == SettingType.SEND_COUNTRY_SPECIFIC:
             chat.send_country_specific = not chat.send_country_specific
             reply_markup = build_settings_keyboard()
+            # TODO Bor
             msg = get_text(
                 additional_text=f'Country specific days are <code>{"enabled" if chat.send_country_specific else "disabled"}</code>.\n', chat=chat)
             session.add(chat)
@@ -45,6 +49,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
         elif callback_data.type == SettingType.SEND_NAME_DAYS:
             chat.send_name_days = not chat.send_name_days
             reply_markup = build_settings_keyboard()
+            # TODO Bor
             msg = get_text(
                 additional_text=f'Name days are <code>{"enabled" if chat.send_name_days else "disabled"}</code>.\n', chat=chat)
             session.add(chat)
@@ -57,6 +62,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             chat.send_name_days = True
 
             reply_markup = build_settings_keyboard()
+            # TODO Bor
             msg = get_text(
                 additional_text=f'All settings reset to defaults.\n', chat=chat)
             session.add(chat)
