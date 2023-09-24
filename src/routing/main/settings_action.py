@@ -92,4 +92,4 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
 
     reply_markup = build_settings_keyboard()
 
-    await query.message.answer(msg, reply_markup=reply_markup)
+    await query.message.edit_text(msg, reply_markup=reply_markup)
