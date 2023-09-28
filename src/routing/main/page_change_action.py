@@ -1,3 +1,4 @@
+from datetime import datetime
 from aiogram import types
 
 from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
@@ -15,6 +16,12 @@ async def process_change_pages_callback(query: types.CallbackQuery, callback_dat
     page_index = callback_data.current_page_index
     new_page_index = min(max(page_index, 0), max_index-1)
     page = pages[new_page_index]
+    date = datetime.today()
+    msg_start = f"{date.day}.{date.month}.{date.year}\n\
+                  ----------"
+    msg_end = f"----------\n\
+                Страница {new_page_index}/{max_index}"
+    msg = msg_start + page + msg_end
     keyboard = build_pages_keyboard(new_page_index)
     if new_page_index == page_index:
-        await query.message.edit_text(page, reply_markup=keyboard)
+        await query.message.edit_text(msg, reply_markup=keyboard)

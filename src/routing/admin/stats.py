@@ -17,6 +17,6 @@ async def process_start(message: types.Message) -> None:
             total_chats += 1
             total_uses += chat.uses
     # TODO Bor
-    message_text = f'Total chats: <code>{total_chats}</code>\n' \
-        f'Total uses: <code>{total_uses}</code>'
+    message_text = f'Суммарное количество чатов: <code>{total_chats}</code>\n' \
+                   f'Суммарное количество использований /holiday: <code>{total_uses}</code>'
     await message.answer(text=message_text)

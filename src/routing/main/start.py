@@ -16,7 +16,9 @@ async def process_start(message: types.Message) -> None:
             session.add(chat)
             session.commit()
             # TODO Bor
-            await message.answer(text='User added')
+            # TODO Khivus "если хотите узнать информацию о боте, вызовите команду /about"
+            await message.answer(text='Вы были успешно добавлены в бота!\n\
+                                       Отправьте /holiday чтобы узнать, какой сегодня праздник.')
 
         else:
             await process_holidays(message)

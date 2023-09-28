@@ -11,15 +11,18 @@ from src.constants import engine
 def get_text(chat: Chat, additional_text: str = ''):
     # TODO Bor
     text = f'{additional_text}' \
-        f'Your current settings and info:\n' \
-        f'<code>Id</code> = {chat.id}\n' \
-        f'<code>Mailing enabled</code> = {chat.mailing_enabled}\n' \
-        f'<code>Mailing time</code> = {chat.mailing_time}\n' \
-        f'<code>send_church_holidays</code> = {chat.send_church_holidays}\n' \
-        f'<code>send_country_specific</code> = {chat.send_country_specific}\n' \
-        f'<code>send_name_days</code> = {chat.send_name_days}\n' \
-        f'<code>Uses</code> = {chat.uses}\n' \
-        f'Choose setting to change.'
+        f'<b>Ваши настройки</b>\n' \
+        f'- Рассылка включена: <code>{chat.mailing_enabled}</code>\n' \
+        f'- Время рассылки: <code>{chat.mailing_time}:00</code>\n' \
+        f'- Отправлять церковные праздники: <code>{chat.send_church_holidays}</code>\n' \
+        f'- Отправлять национальные праздники: <code>{chat.send_country_specific}</code>\n' \
+        f'- Отправлять именины: <code>{chat.send_name_days}</code>\n' \
+        '\n' \
+        f'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
+        # '\n' \
+        # f'<b>Информация и статистика</b>\n' \
+        # f'- ID пользователя: <code>{chat.id}</code>\n' \
+        # f'- Использований /holiday: <code>{chat.uses}</code>\n' \
 
     return text
 

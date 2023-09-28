@@ -22,12 +22,12 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             reply_markup = build_settings_keyboard()
             # TODO Bor
             msg = get_text(
-                additional_text=f'Mailing is <code>{"enabled" if chat.mailing_enabled else "disabled"}</code>.\n', chat=chat)
+                additional_text=f'Рассылка теперь <code>{"включена" if chat.mailing_enabled else "выключена"}</code>.\n', chat=chat)
             session.add(chat)
 
         elif callback_data.type == SettingType.MAILING_TIME:
             # TODO Bor
-            msg = 'Choose mailing hour'
+            msg = 'Выберите час в который вы хотите получать рассылку:'
             reply_markup = build_hours_keyboard()
 
         elif callback_data.type == SettingType.SEND_CHURCH_HOLIDAYS:
@@ -35,7 +35,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             reply_markup = build_settings_keyboard()
             # TODO Bor
             msg = get_text(
-                additional_text=f'Church holidays are <code>{"enabled" if chat.send_church_holidays else "disabled"}</code>.\n', chat=chat)
+                additional_text=f'Церковные праздники теперь <code>{"включены" if chat.send_church_holidays else "выключены"}</code>.\n', chat=chat)
             session.add(chat)
 
         elif callback_data.type == SettingType.SEND_COUNTRY_SPECIFIC:
@@ -43,7 +43,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             reply_markup = build_settings_keyboard()
             # TODO Bor
             msg = get_text(
-                additional_text=f'Country specific days are <code>{"enabled" if chat.send_country_specific else "disabled"}</code>.\n', chat=chat)
+                additional_text=f'Национальные праздники теперь <code>{"включены" if chat.send_country_specific else "выключены"}</code>.\n', chat=chat)
             session.add(chat)
 
         elif callback_data.type == SettingType.SEND_NAME_DAYS:
@@ -51,7 +51,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             reply_markup = build_settings_keyboard()
             # TODO Bor
             msg = get_text(
-                additional_text=f'Name days are <code>{"enabled" if chat.send_name_days else "disabled"}</code>.\n', chat=chat)
+                additional_text=f'Именины теперь <code>{"включены" if chat.send_name_days else "выключены"}</code>.\n', chat=chat)
             session.add(chat)
 
         elif callback_data.type == SettingType.RESET:
@@ -64,7 +64,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             reply_markup = build_settings_keyboard()
             # TODO Bor
             msg = get_text(
-                additional_text=f'All settings reset to defaults.\n', chat=chat)
+                additional_text=f'Все настройки были сброшены до заводских.\n', chat=chat)
             session.add(chat)
 
         else:

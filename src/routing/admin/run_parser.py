@@ -9,8 +9,8 @@ from src.site_parser import parse_site
 async def process_start(message: types.Message) -> None:
     # TODO Bor
     if await parse_site():
-        message_text = 'Site parsed and added to db.'
+        message_text = 'Сайт спаршен и добавлен в БД.'
     else:
-        message_text = 'Site don\'t parsed'
+        message_text = 'Сайт не удалось пропарсить.'
 
     await message.answer(text=message_text)

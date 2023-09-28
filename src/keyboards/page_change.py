@@ -11,8 +11,8 @@ def build_pages_keyboard(current_page_index):
     # TODO Khivus добавить еще 2 клавы на первую/последнюю страницу
     # TODO Bor ASCII стрелочки красиво
     builder.button(
-        text='<-', callback_data=PagesCallbackData(current_page_index=current_page_index - 1))
+        text='⬅️', callback_data=PagesCallbackData(current_page_index=current_page_index - 1))
     builder.button(
-        text='->', callback_data=PagesCallbackData(current_page_index=current_page_index + 1))
+        text='➡️', callback_data=PagesCallbackData(current_page_index=current_page_index + 1))
 
     return builder.as_markup()

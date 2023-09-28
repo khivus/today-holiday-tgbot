@@ -19,17 +19,18 @@ class SettingsCallbackData(CallbackData, prefix='generate'):
 def build_settings_keyboard():
     builder = InlineKeyboardBuilder()
     # TODO Bor x6
-    builder.button(text='mailing_enabled', callback_data=SettingsCallbackData(
+    # TODO Khivus придумать как ставить галочки и крестики в кнопки вместо + и -
+    builder.button(text='+- Рассылка', callback_data=SettingsCallbackData(
         type=SettingType.MAILING_ENABLED))
-    builder.button(text='mailing_time', callback_data=SettingsCallbackData(
+    builder.button(text='⏰ Время рассылки', callback_data=SettingsCallbackData(
         type=SettingType.MAILING_TIME))
-    builder.button(text='send_church_holidays', callback_data=SettingsCallbackData(
+    builder.button(text='+- Церковные', callback_data=SettingsCallbackData(
         type=SettingType.SEND_CHURCH_HOLIDAYS))
-    builder.button(text='send_country_specific', callback_data=SettingsCallbackData(
+    builder.button(text='+- Национальные', callback_data=SettingsCallbackData(
         type=SettingType.SEND_COUNTRY_SPECIFIC))
-    builder.button(text='send_name_days', callback_data=SettingsCallbackData(
+    builder.button(text='+- Именины', callback_data=SettingsCallbackData(
         type=SettingType.SEND_NAME_DAYS))
-    builder.button(text='reset', callback_data=SettingsCallbackData(
+    builder.button(text='Сбросить настройки до заводских', callback_data=SettingsCallbackData(
         type=SettingType.RESET))
 
     builder.adjust(1, 2, 2, 1)
