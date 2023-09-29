@@ -1,4 +1,3 @@
-import datetime
 
 from aiogram import types
 from aiogram.filters import Command
@@ -6,79 +5,14 @@ from sqlmodel import Session, select
 
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
-from src.models.holiday import Holiday, HolidayType
+from src.page_builder import build_pages
 from src.routers import main_router
 from src.constants import engine
 from src.routing.main.page_change_action import get_holiday_message
-
-
-def build_pages(chat_id: int):
-    CHUNK_SIZE = 15
-    CHUNK_OVERHEAD = 5
-    today = datetime.date.today()
-    day = today.day
-    month = today.month
-    holidays: dict = {
-        'normal': [],
-        'country_specific' : ['---Национальные праздники---'],
-        'church' : ['---Церковные праздники---'],
-        'name_day' : ['---Именины---']
-    }
-    
-    with Session(engine) as session:
-        results = session.exec(select(Holiday).where(
-            Holiday.day == day).where(Holiday.month == month)).all()
-        chat = session.exec(select(Chat).where(
-            Chat.id == chat_id)).one()
-
-        for element in results:
-            holiday_text = f'- {element.name}'
-            if element.years_passed is not None:
-                holiday_text += f' - {element.years_passed}'
-
-            if element.type == HolidayType.church and chat.send_church_holidays:
-                holidays['church'].append(holiday_text)
-            elif element.type == HolidayType.country_specific and chat.send_country_specific:
-                holidays['country_specific'].append(holiday_text)
-            elif element.type == HolidayType.name_day and chat.send_name_days:
-                holidays['name_day'].append(holiday_text)
-    
-    for key in holidays.keys():
-        if key == 'normal':
-            continue
-        if len(holidays[key]) == 1:
-            del holidays[key]
-    
-    holiday_count = 0
-    
-    for key in holidays.keys():
-        if key != 'normal':
-            holiday_count -= 1
-        holiday_count += len(holidays[key])
-            
-    chunk_count = holiday_count // CHUNK_SIZE
-    if holiday_count % CHUNK_SIZE > CHUNK_OVERHEAD:
-        chunk_count += 1
-    
-    holiday_page_count = 0
-    pages = ['']
-    
-    for key in holidays.keys():
-        for holiday in key:
-            if holiday == holidays[key][0] and holidays[key] != 'normal':
-                pages[len(pages)-1] += f'{holiday}\n'
-            elif holiday_page_count < CHUNK_SIZE or chunk_count == len(pages):
-                pages[len(pages)-1] += f'{holiday}\n'
-                holiday_page_count += 1
-            else:
-                holiday_page_count = 1
-                pages.append(f'{holiday}\n')
-    
-    return pages
         
 
 @main_router.message(Command('holidays'))
-async def process_holidays(message: types.Message, additional_text: str) -> None:
+async def process_holidays(message: types.Message) -> None:
 
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(
@@ -88,8 +22,7 @@ async def process_holidays(message: types.Message, additional_text: str) -> None
         session.commit()
 
     pages = build_pages(chat_id=message.chat.id)
-    message_text = get_holiday_message(
-        page_index=0, pages=pages, additional_end_text=additional_text)
+    message_text = get_holiday_message(page_index=0, pages=pages)
     keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
 
     await message.answer(text=message_text, reply_markup=keyboard)

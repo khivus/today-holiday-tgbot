@@ -12,4 +12,4 @@ async def process_about(message: types.Message) -> None:
         f'Версия бота: {VERSION}\n' \
         'Данные праздников взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.'
 
-    await message.answer(text=msg)
+    await message.answer(text=msg, disable_web_page_preview=True)

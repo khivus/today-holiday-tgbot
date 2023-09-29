@@ -24,4 +24,4 @@ async def process_start(message: types.Message) -> None:
             await message.answer(text=msg)
 
         else:
-            await process_holidays(message=message, additional_text='Если хотите узнать информацию о боте, используйте команду /about.')
+            await process_holidays(message)

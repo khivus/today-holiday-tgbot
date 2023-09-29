@@ -27,15 +27,15 @@ def build_settings_keyboard(chat_id: int):
         chat = session.exec(select(Chat).where(
             Chat.id == chat_id)).one()
         
-        builder.button(text=f'{"✔️" if chat.mailing_enabled else "❌"} Рассылка', callback_data=SettingsCallbackData(
+        builder.button(text=f'{"✅" if chat.mailing_enabled else "❌"} Рассылка', callback_data=SettingsCallbackData(
             type=SettingType.MAILING_ENABLED))
         builder.button(text='⏰ Время рассылки', callback_data=SettingsCallbackData(
             type=SettingType.MAILING_TIME))
-        builder.button(text=f'{"✔️" if chat.send_church_holidays else "❌"} Церковные', callback_data=SettingsCallbackData(
+        builder.button(text=f'{"✅" if chat.send_church_holidays else "❌"} Церковные', callback_data=SettingsCallbackData(
             type=SettingType.SEND_CHURCH_HOLIDAYS))
-        builder.button(text=f'{"✔️" if chat.send_country_specific else "❌"} Национальные', callback_data=SettingsCallbackData(
+        builder.button(text=f'{"✅" if chat.send_country_specific else "❌"} Национальные', callback_data=SettingsCallbackData(
             type=SettingType.SEND_COUNTRY_SPECIFIC))
-        builder.button(text=f'{"✔️" if chat.send_name_days else "❌"} Именины', callback_data=SettingsCallbackData(
+        builder.button(text=f'{"✅" if chat.send_name_days else "❌"} Именины', callback_data=SettingsCallbackData(
             type=SettingType.SEND_NAME_DAYS))
         builder.button(text='🔄 Сбросить настройки до заводских', callback_data=SettingsCallbackData(
             type=SettingType.RESET))

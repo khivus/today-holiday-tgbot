@@ -3,18 +3,18 @@ from aiogram import types
 
 from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
 from src.routers import main_router
-from src.routing.main.holidays import build_pages
+from src.page_builder import build_pages
 
 
-def get_holiday_message(page_index: int, pages: list[str], additional_end_text: str):
+def get_holiday_message(page_index: int, pages: list[str]):
     date = datetime.today()
     max_index = len(pages)
     msg_start = f'Праздники на {date.day}.{date.month}.{date.year}:\n' \
-        f'----------'
-    msg_end = f'----------\n' \
+        f'--------------------------------------------------\n'
+    msg_end = f'--------------------------------------------------\n' \
         f'Страница {page_index+1}/{max_index}'
     page = pages[page_index]
-    message = msg_start + page + msg_end + '\n\n' + additional_end_text
+    message = msg_start + page + msg_end
     return message
 
 
