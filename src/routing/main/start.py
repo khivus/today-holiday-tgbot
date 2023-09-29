@@ -16,12 +16,12 @@ async def process_start(message: types.Message) -> None:
             session.add(chat)
             session.commit()
             msg = 'Я - Какой сегодня праздник бот!\n' \
-                'Отправь /holiday чтобы узнать, какой сегодня праздник.\n' \
+                'Отправь /holidays чтобы узнать, какой сегодня праздник.\n' \
                 'Включить ежедневную авторассылку праздников можно в /settings.\n' \
                 'Для вопросов и предложений: @khivus.\n' \
                 'Данные праздников взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.'
                 
-            await message.answer(text=msg)
+            await message.answer(text=msg, disable_web_page_preview=True)
 
         else:
             await process_holidays(message)

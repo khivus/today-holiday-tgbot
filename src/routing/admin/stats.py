@@ -16,7 +16,7 @@ async def process_stats(message: types.Message) -> None:
         for chat in chats:
             total_chats += 1
             total_uses += chat.uses
-    message_text = f'Версия бота: {VERSION}\n' \
+    message_text = f'Версия бота: <code>{VERSION}</code>\n' \
         f'Суммарное количество чатов: <code>{total_chats}</code>\n' \
         f'Суммарное количество использований: <code>{total_uses}</code>'
     await message.answer(text=message_text)

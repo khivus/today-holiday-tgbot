@@ -9,7 +9,7 @@ from src.page_builder import build_pages
 def get_holiday_message(page_index: int, pages: list[str]):
     date = datetime.today()
     max_index = len(pages)
-    msg_start = f'Праздники на {date.day}.{date.month}.{date.year}:\n' \
+    msg_start = f'Праздники на {date.day:02}.{date.month:02}.{date.year}:\n' \
         f'--------------------------------------------------\n'
     msg_end = f'--------------------------------------------------\n' \
         f'Страница {page_index+1}/{max_index}'
@@ -28,3 +28,5 @@ async def process_change_pages_callback(query: types.CallbackQuery, callback_dat
     keyboard = build_pages_keyboard(current_page_index=new_page_index, max_page_index=max_index)
     if new_page_index == page_index:
         await query.message.edit_text(text=message_text, reply_markup=keyboard)
+    else:
+        await query.answer()
