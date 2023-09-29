@@ -27,9 +27,9 @@ def build_pages(chat_id: int):
             Chat.id == chat_id)).one()
 
         for element in results:
-            holiday_text = f'- {element.name}'
+            holiday_text = f'● {element.name}'
             if element.years_passed is not None:
-                holiday_text += f' - {element.years_passed}'
+                holiday_text += f' ({element.years_passed})'
             
             if element.type == HolidayType.normal:
                 holidays['normal'].append(holiday_text)
