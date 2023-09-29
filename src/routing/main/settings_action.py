@@ -70,17 +70,18 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
 @main_router.callback_query(HourCallbackData.filter())
 async def process_hours_callback(query: types.CallbackQuery, callback_data: HourCallbackData):
     hour = callback_data.chosen_hour
-    if hour == 24: # If you go back to settings
-        msg = get_text(chat=query.message.chat.id)
-    else:
-        with Session(engine) as session:
-            chat = session.exec(select(Chat).where(
-                Chat.id == query.message.chat.id)).one()
+    with Session(engine) as session:
+        chat = session.exec(select(Chat).where(
+            Chat.id == query.message.chat.id)).one()
+        
+        if hour == 24: # If you go back to settings
+            msg = get_text(chat=chat)
+        else:
             chat.mailing_time = hour
             session.add(chat)
             session.commit()
-            msg = get_text(
-                additional_text=f'Время рассылки было поменяно на: <code>{chat.mailing_time}:00</code>.\n', chat=chat)
+            msg = get_text(additional_text=f'Время рассылки было поменяно на: <code>{chat.mailing_time}:00</code>.\n', chat=chat)
+            
     reply_markup = build_settings_keyboard()
 
     await query.message.edit_text(text=msg, reply_markup=reply_markup)

@@ -18,10 +18,6 @@ def get_text(chat: Chat, additional_text: str = ''):
         f'- Отправлять именины: <code>{"Да" if chat.send_name_days else "Нет"}</code>\n' \
         '\n' \
         f'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
-        # '\n' \
-        # f'<b>Информация и статистика</b>\n' \
-        # f'- ID пользователя: <code>{chat.id}</code>\n' \
-        # f'- Использований /holiday: <code>{chat.uses}</code>\n' \
 
     return text
 
