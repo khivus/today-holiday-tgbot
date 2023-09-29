@@ -6,22 +6,25 @@ from src.routers import main_router
 from src.routing.main.holidays import build_pages
 
 
+def get_holiday_message(page_index: int, pages: list[str], additional_end_text: str):
+    date = datetime.today()
+    max_index = len(pages)
+    msg_start = f'Праздники на {date.day}.{date.month}.{date.year}:\n' \
+        f'----------'
+    msg_end = f'----------\n' \
+        f'Страница {page_index+1}/{max_index}'
+    page = pages[page_index]
+    message = msg_start + page + msg_end + '\n\n' + additional_end_text
+    return message
+
+
 @main_router.callback_query(PagesCallbackData.filter())
 async def process_change_pages_callback(query: types.CallbackQuery, callback_data: PagesCallbackData):
-    # TODO Bor вот здесь нужно в начале/конце, что-то красивое писать
-    # Можно писать номер страницы, день и т.д.
-    # Спрашивай, помогу
     pages = build_pages(chat_id=query.message.chat.id)
     max_index = len(pages)
     page_index = callback_data.current_page_index
     new_page_index = min(max(page_index, 0), max_index-1)
-    page = pages[new_page_index]
-    date = datetime.today()
-    msg_start = f"{date.day}.{date.month}.{date.year}\n\
-                  ----------"
-    msg_end = f"----------\n\
-                Страница {new_page_index}/{max_index}"
-    msg = msg_start + page + msg_end
-    keyboard = build_pages_keyboard(new_page_index)
+    message_text = get_holiday_message(page_index=new_page_index, pages=pages)
+    keyboard = build_pages_keyboard(current_page_index=new_page_index, max_page_index=max_index)
     if new_page_index == page_index:
-        await query.message.edit_text(msg, reply_markup=keyboard)
+        await query.message.edit_text(text=message_text, reply_markup=keyboard)

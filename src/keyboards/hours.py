@@ -8,11 +8,11 @@ class HourCallbackData(CallbackData, prefix='meow'):
 
 def build_hours_keyboard():
     builder = InlineKeyboardBuilder()
-    # TODO Bor если хочешь как-то часы красиво сделать
     for i in range(24):
         builder.button(
             text=f'{i}', callback_data=HourCallbackData(chosen_hour=i))
+    builder.button(text=f'↩️ Вернуться в настройки', callback_data=HourCallbackData(chosen_hour=24))
 
-    builder.adjust(6, 6, 6, 6)
+    builder.adjust(6, 6, 6, 6, 1)
 
     return builder.as_markup()

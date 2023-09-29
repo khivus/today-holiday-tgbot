@@ -4,9 +4,9 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-version = 'v0.35'
+VERSION = 'v1.0' 
 
-ADMIN = 897276284
+ADMIN = 897276284 # khivus' id (ADMIN ID)
 
 config = Config()
 bot = Bot(token=config.API_TOKEN, parse_mode='HTML')

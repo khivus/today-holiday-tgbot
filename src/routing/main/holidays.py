@@ -9,21 +9,25 @@ from src.models.chat import Chat
 from src.models.holiday import Holiday, HolidayType
 from src.routers import main_router
 from src.constants import engine
+from src.routing.main.page_change_action import get_holiday_message
 
 
 def build_pages(chat_id: int):
-
+    CHUNK_SIZE = 15
+    CHUNK_OVERHEAD = 5
     today = datetime.date.today()
     day = today.day
     month = today.month
-    pages = ['']
-    old_index = 0
-    index = 0
-    skip = False
-
+    holidays: dict = {
+        'normal': [],
+        'country_specific' : ['---Национальные праздники---'],
+        'church' : ['---Церковные праздники---'],
+        'name_day' : ['---Именины---']
+    }
+    
     with Session(engine) as session:
         results = session.exec(select(Holiday).where(
-            Holiday.day == day).where(Holiday.month == month))
+            Holiday.day == day).where(Holiday.month == month)).all()
         chat = session.exec(select(Chat).where(
             Chat.id == chat_id)).one()
 
@@ -32,31 +36,49 @@ def build_pages(chat_id: int):
             if element.years_passed is not None:
                 holiday_text += f' - {element.years_passed}'
 
-            if element.type == HolidayType.normal:
-                new_index = 0
-            elif element.type == HolidayType.church and chat.send_church_holidays:
-                new_index = 1
+            if element.type == HolidayType.church and chat.send_church_holidays:
+                holidays['church'].append(holiday_text)
             elif element.type == HolidayType.country_specific and chat.send_country_specific:
-                new_index = 2
+                holidays['country_specific'].append(holiday_text)
             elif element.type == HolidayType.name_day and chat.send_name_days:
-                new_index = 3
+                holidays['name_day'].append(holiday_text)
+    
+    for key in holidays.keys():
+        if key == 'normal':
+            continue
+        if len(holidays[key]) == 1:
+            del holidays[key]
+    
+    holiday_count = 0
+    
+    for key in holidays.keys():
+        if key != 'normal':
+            holiday_count -= 1
+        holiday_count += len(holidays[key])
+            
+    chunk_count = holiday_count // CHUNK_SIZE
+    if holiday_count % CHUNK_SIZE > CHUNK_OVERHEAD:
+        chunk_count += 1
+    
+    holiday_page_count = 0
+    pages = ['']
+    
+    for key in holidays.keys():
+        for holiday in key:
+            if holiday == holidays[key][0] and holidays[key] != 'normal':
+                pages[len(pages)-1] += f'{holiday}\n'
+            elif holiday_page_count < CHUNK_SIZE or chunk_count == len(pages):
+                pages[len(pages)-1] += f'{holiday}\n'
+                holiday_page_count += 1
             else:
-                skip = True
-
-            if not skip:
-                if old_index != new_index:
-                    pages.append('')
-                    index += 1
-                    old_index = new_index
-
-                pages[index] += holiday_text + '\n'
-            skip = False
-
+                holiday_page_count = 1
+                pages.append(f'{holiday}\n')
+    
     return pages
-
+        
 
 @main_router.message(Command('holidays'))
-async def process_holidays(message: types.Message) -> None:
+async def process_holidays(message: types.Message, additional_text: str) -> None:
 
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(
@@ -64,11 +86,10 @@ async def process_holidays(message: types.Message) -> None:
         chat.uses += 1
         session.add(chat)
         session.commit()
-    # TODO Bor вот здесь нужно в начале/конце, что-то красивое писать
-    # Можно писать номер страницы, день и т.д.
-    # Спрашивай, помогу
-    pages = build_pages(chat_id=message.chat.id)
-    keyboard = build_pages_keyboard(current_page_index=0)
 
-    if len(pages[0]) != 0:
-        await message.answer(text=pages[0], reply_markup=keyboard)
+    pages = build_pages(chat_id=message.chat.id)
+    message_text = get_holiday_message(
+        page_index=0, pages=pages, additional_end_text=additional_text)
+    keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
+
+    await message.answer(text=message_text, reply_markup=keyboard)

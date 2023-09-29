@@ -15,10 +15,13 @@ async def process_start(message: types.Message) -> None:
             chat = Chat(id=message.chat.id)
             session.add(chat)
             session.commit()
-            # TODO Bor
-            # TODO Khivus "если хотите узнать информацию о боте, вызовите команду /about"
-            await message.answer(text='Вы были успешно добавлены в бота!\n\
-                                       Отправьте /holiday чтобы узнать, какой сегодня праздник.')
+            msg = 'Я - Какой сегодня праздник бот!\n' \
+                'Отправь /holiday чтобы узнать, какой сегодня праздник.\n' \
+                'Включить ежедневную авторассылку праздников можно в /settings.\n' \
+                'Для вопросов и предложений: @khivus.\n' \
+                'Данные праздников взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.'
+                
+            await message.answer(text=msg)
 
         else:
-            await process_holidays(message)
+            await process_holidays(message=message, additional_text='Если хотите узнать информацию о боте, используйте команду /about.')

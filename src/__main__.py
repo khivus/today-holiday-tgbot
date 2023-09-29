@@ -6,6 +6,7 @@ from sqlmodel import SQLModel
 from src.constants import dp, bot, engine
 from src.routers import main_router, admin_router
 from src.models import __init__
+from src.routing.admin.start_message import send_successful_start_message
 from src.scheduler import scheduler
 
 
@@ -21,8 +22,10 @@ async def main():
     asyncio.create_task(scheduler())
 
     await bot.delete_webhook(drop_pending_updates=True)
+    await send_successful_start_message()
     await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
     asyncio.run(main())
+

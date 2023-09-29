@@ -3,7 +3,8 @@ from . import (
     holidays,
     settings,
     settings_action,
-    page_change_action
+    page_change_action,
+    about
 )
 
-# TODO Make /about and /search command
+# TODO Make /search command

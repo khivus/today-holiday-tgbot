@@ -9,14 +9,13 @@ from src.constants import engine
 
 
 def get_text(chat: Chat, additional_text: str = ''):
-    # TODO Bor
     text = f'{additional_text}' \
         f'<b>Ваши настройки</b>\n' \
-        f'- Рассылка включена: <code>{chat.mailing_enabled}</code>\n' \
+        f'- Рассылка включена: <code>{"Да" if chat.mailing_enabled else "Нет"}</code>\n' \
         f'- Время рассылки: <code>{chat.mailing_time}:00</code>\n' \
-        f'- Отправлять церковные праздники: <code>{chat.send_church_holidays}</code>\n' \
-        f'- Отправлять национальные праздники: <code>{chat.send_country_specific}</code>\n' \
-        f'- Отправлять именины: <code>{chat.send_name_days}</code>\n' \
+        f'- Отправлять церковные праздники: <code>{"Да" if chat.send_church_holidays else "Нет"}</code>\n' \
+        f'- Отправлять национальные праздники: <code>{"Да" if chat.send_country_specific else "Нет"}</code>\n' \
+        f'- Отправлять именины: <code>{"Да" if chat.send_name_days else "Нет"}</code>\n' \
         '\n' \
         f'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
         # '\n' \
@@ -33,7 +32,7 @@ async def process_settings(message: types.Message) -> None:
         chat = session.exec(select(Chat).where(
             Chat.id == message.chat.id)).one()
 
-    keyboard = build_settings_keyboard()
+    keyboard = build_settings_keyboard(chat_id=message.chat.id)
 
     text = get_text(chat=chat)
 
