@@ -1,12 +1,12 @@
 import aiohttp
-import re
 import datetime
 
 from bs4 import BeautifulSoup
 from sqlmodel import Session, select
 from user_agent import generate_user_agent
+
 from src.models.holiday import HolidayType, Holiday
-from src.__main__ import engine
+from src.constants import engine
 
 
 async def parse_site():
@@ -44,17 +44,11 @@ async def parse_site():
                     years_passed = None
 
                 match i:
-                    case 1:
-                        holiday_type = HolidayType.church
-                    case 2:
-                        holiday_type = HolidayType.country_specific
-                    case 3:
-                        holiday_type = HolidayType.name_day
-                    case default:
-                        holiday_type = HolidayType.normal
-
-                if re.match(r'(международный|всемирный|всенародный).*', holiday_name.lower()):
-                    holiday_type = HolidayType.international
+                    case 0: holiday_type = HolidayType.normal
+                    case 1: holiday_type = HolidayType.church
+                    case 2: holiday_type = HolidayType.country_specific
+                    case 3: holiday_type = HolidayType.name_day
+                    case default: raise Exception('Holiday type index overflow!')
 
                 elements.append((holiday_name, holiday_type, years_passed))
 
@@ -76,4 +70,5 @@ async def parse_site():
             session.add(holiday)
         session.commit()
 
+    print('Site parsed successfully.')
     return True

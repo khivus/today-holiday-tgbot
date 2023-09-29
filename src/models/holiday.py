@@ -6,7 +6,6 @@ from sqlmodel import SQLModel, Field
 
 class HolidayType(str, Enum):
     normal = "normal"
-    international = "international"
     church = "church"
     country_specific = "country_specific"
     name_day = "name_day"
