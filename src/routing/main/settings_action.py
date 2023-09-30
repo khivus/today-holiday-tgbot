@@ -53,7 +53,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             chat.send_name_days = True
 
             msg = get_text(
-                additional_text=f'Все настройки были сброшены до заводских.\n', chat=chat)
+                additional_text='Все настройки были сброшены до заводских.\n', chat=chat)
             session.add(chat)
 
         else:

@@ -10,14 +10,14 @@ from src.constants import engine
 
 def get_text(chat: Chat, additional_text: str = ''):
     text = f'{additional_text}' \
-        f'<b>Ваши настройки</b>\n' \
+        '<b>Ваши настройки</b>\n' \
         f'- Рассылка включена: <code>{"Да" if chat.mailing_enabled else "Нет"}</code>\n' \
         f'- Время рассылки: <code>{chat.mailing_time}:00</code>\n' \
         f'- Отправлять церковные праздники: <code>{"Да" if chat.send_church_holidays else "Нет"}</code>\n' \
         f'- Отправлять национальные праздники: <code>{"Да" if chat.send_country_specific else "Нет"}</code>\n' \
         f'- Отправлять именины: <code>{"Да" if chat.send_name_days else "Нет"}</code>\n' \
         '\n' \
-        f'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
+        'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
 
     return text
 
