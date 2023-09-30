@@ -40,6 +40,6 @@ def build_settings_keyboard(chat_id: int):
         builder.button(text='🔄 Сбросить настройки до заводских', callback_data=SettingsCallbackData(
             type=SettingType.RESET))
 
-    builder.adjust(2, 3, 1)
+    builder.adjust(1, 2, 2, 1)
 
     return builder.as_markup()

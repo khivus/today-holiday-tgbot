@@ -10,7 +10,7 @@ def build_hours_keyboard():
     builder = InlineKeyboardBuilder()
     for i in range(24):
         builder.button(text=f'{i}', callback_data=HourCallbackData(chosen_hour=i))
-    builder.button(text='↩️ Вернуться в настройки', callback_data=HourCallbackData(chosen_hour=24))
+    builder.button(text='↩️ Вернуться к настройкам', callback_data=HourCallbackData(chosen_hour=24))
 
     builder.adjust(6, 6, 6, 6, 1)
 
