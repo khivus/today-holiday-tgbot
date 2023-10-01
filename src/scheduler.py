@@ -7,10 +7,10 @@ from src.site_parser import parse_site
 
 async def scheduler():
     while True:
-        if pycron.is_now('0 1 * * *'):
+        if pycron.is_now('1 0 * * *'):
             await parse_site()
             await asyncio.sleep(60)
-        elif pycron.is_now('1 * * * *'):
+        elif pycron.is_now('2 * * * *'):
             await send_scheluded_holidays_message()
             await asyncio.sleep(60)
         else:

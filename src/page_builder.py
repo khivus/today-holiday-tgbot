@@ -8,8 +8,8 @@ from src.constants import engine
 
 
 def build_pages(chat_id: int):
-    CHUNK_SIZE = 15
-    CHUNK_OVERHEAD = 5
+    CHUNK_SIZE = 13
+    CHUNK_OVERHEAD = 7
     today = datetime.date.today()
     day = today.day
     month = today.month
@@ -54,7 +54,7 @@ def build_pages(chat_id: int):
         holiday_count += len(holidays[key])
             
     chunk_count = holiday_count // CHUNK_SIZE
-    if holiday_count % CHUNK_SIZE > CHUNK_OVERHEAD:
+    if (holiday_count % CHUNK_SIZE) > CHUNK_OVERHEAD:
         chunk_count += 1
     
     holiday_page_count = 0
@@ -66,7 +66,7 @@ def build_pages(chat_id: int):
         for holiday in holidays[key]:
             if holiday == holidays[key][0] and key != 'normal':
                 pages[len(pages)-1] += f'{holiday}\n'
-            elif holiday_page_count < CHUNK_SIZE or chunk_count == len(pages):
+            elif holiday_page_count < CHUNK_SIZE or (chunk_count == len(pages) and holiday_page_count >= CHUNK_SIZE):
                 pages[len(pages)-1] += f'{holiday}\n'
                 holiday_page_count += 1
             else:
