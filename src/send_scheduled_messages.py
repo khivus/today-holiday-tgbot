@@ -19,7 +19,7 @@ async def send_scheluded_holidays_message():
             chat.uses += 1
             session.add(chat)
 
-            pages = build_pages(chat_id=chat.id)
+            pages = await build_pages(chat_id=chat.id)
             message_text = get_holiday_message(page_index=0, pages=pages)
             keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
             message = await bot.send_message(chat_id=chat.id, text=message_text, reply_markup=keyboard)

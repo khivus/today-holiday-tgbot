@@ -21,7 +21,7 @@ async def process_holidays(message: types.Message) -> None:
         session.add(chat)
         session.commit()
 
-    pages = build_pages(chat_id=message.chat.id)
+    pages = await build_pages(chat_id=message.chat.id)
     message_text = get_holiday_message(page_index=0, pages=pages)
     keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
 

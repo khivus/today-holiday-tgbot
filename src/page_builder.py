@@ -5,11 +5,12 @@ from sqlmodel import Session, select
 from src.models.chat import Chat
 from src.models.holiday import Holiday, HolidayType
 from src.constants import engine
+from src.site_parser import parse_site
 
 
-def build_pages(chat_id: int):
+async def build_pages(chat_id: int):
     CHUNK_SIZE = 13
-    CHUNK_OVERHEAD = 7
+    CHUNK_OVERHEAD = 6
     today = datetime.date.today()
     day = today.day
     month = today.month
@@ -21,11 +22,18 @@ def build_pages(chat_id: int):
     }
     
     with Session(engine) as session:
-        results = session.exec(select(Holiday).where(
-            Holiday.day == day).where(Holiday.month == month))
-        chat = session.exec(select(Chat).where(
-            Chat.id == chat_id)).one()
-
+        selected = select(Holiday).where(Holiday.day == day).where(Holiday.month == month)
+        results = session.exec(selected)
+        
+        if results.all() == []: # If site is not parsed somehow
+            if await parse_site():
+                print('Site parsed from page_builder!')
+            else:
+                raise Exception('Error parsing site from page_builder')
+            
+        results = session.exec(selected)
+        chat = session.exec(select(Chat).where(Chat.id == chat_id)).one()
+        
         for element in results:
             holiday_text = f'● {element.name}'
             if element.years_passed is not None:
@@ -64,7 +72,7 @@ def build_pages(chat_id: int):
         if len(holidays[key]) == 0:
             continue
         for holiday in holidays[key]:
-            if holiday == holidays[key][0] and key != 'normal':
+            if holiday == holidays[key][0] and key != 'normal' and holiday_page_count < CHUNK_SIZE:
                 pages[len(pages)-1] += f'{holiday}\n'
             elif holiday_page_count < CHUNK_SIZE or (chunk_count == len(pages) and holiday_page_count >= CHUNK_SIZE):
                 pages[len(pages)-1] += f'{holiday}\n'
