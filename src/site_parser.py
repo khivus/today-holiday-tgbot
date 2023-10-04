@@ -9,7 +9,7 @@ from src.models.holiday import HolidayType, Holiday
 from src.constants import engine
 
 
-async def parse_site():
+async def parse_site() -> None:
     url = 'https://kakoysegodnyaprazdnik.ru/'
 
     async with aiohttp.ClientSession() as session:
@@ -55,20 +55,33 @@ async def parse_site():
     today = datetime.date.today()
     day = today.day
     month = today.month
+    new_holidays = 0
+    updated_holidays = 0
+    skip = False
 
     with Session(engine) as session:
         results = session.exec(select(Holiday).where(
             Holiday.day == day).where(Holiday.month == month))
-        for holiday in results:
-            session.delete(holiday)
+        for pending_holiday in elements:
+            for saved_holiday in results:
+                if saved_holiday.name == pending_holiday[0] and saved_holiday.years_passed == pending_holiday[2]:
+                    skip = True
+                    break
+                elif saved_holiday.name == pending_holiday[0] and saved_holiday.years_passed != pending_holiday[2]:
+                    saved_holiday.years_passed = pending_holiday[2]
+                    session.add(saved_holiday)
+                    updated_holidays += 1
+                    skip = True
+                    break
+            if not skip:
+                holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], years_passed=pending_holiday[2], day=day, month=month)
+                session.add(holiday)
+                new_holidays += 1
+            
+            skip = False
+            
         session.commit()
 
-    with Session(engine) as session:
-        for holdiday_element in elements:
-            holiday = Holiday(
-                name=holdiday_element[0], type=holdiday_element[1], years_passed=holdiday_element[2], day=day, month=month)
-            session.add(holiday)
-        session.commit()
-
-    print('Site parsed successfully.')
+    print(f'Added {new_holidays} and updated {updated_holidays} holidays.')
+    
     return True

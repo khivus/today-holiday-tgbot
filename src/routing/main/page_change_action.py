@@ -20,7 +20,7 @@ def get_holiday_message(page_index: int, pages: list[str]):
 
 @main_router.callback_query(PagesCallbackData.filter())
 async def process_change_pages_callback(query: types.CallbackQuery, callback_data: PagesCallbackData):
-    pages = build_pages(chat_id=query.message.chat.id)
+    pages = await build_pages(chat_id=query.message.chat.id)
     max_index = len(pages)
     page_index = callback_data.current_page_index
     new_page_index = min(max(page_index, 0), max_index-1)
