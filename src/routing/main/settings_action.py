@@ -82,6 +82,6 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
             session.commit()
             msg = get_text(additional_text=f'Время рассылки было поменяно на: <code>{chat.mailing_time}:00</code>.\n', chat=chat)
             
-    reply_markup = build_settings_keyboard()
+    reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
 
     await query.message.edit_text(text=msg, reply_markup=reply_markup)
