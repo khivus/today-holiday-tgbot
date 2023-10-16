@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from sqlmodel import Session, select
 from user_agent import generate_user_agent
 
+from src.constants import ADMIN, bot
 from src.models.holiday import HolidayType, Holiday
 from src.constants import engine
 
@@ -21,6 +22,11 @@ async def parse_site() -> None:
 
     elements: list[str] = []
     i = 0
+    
+    normal_counter = 0
+    church_counter = 0
+    country_specific_counter = 0
+    name_day_counter = 0
 
     for element in listl:
         if (element.name == 'div'):
@@ -44,10 +50,18 @@ async def parse_site() -> None:
                     years_passed = None
 
                 match i:
-                    case 0: holiday_type = HolidayType.normal
-                    case 1: holiday_type = HolidayType.church
-                    case 2: holiday_type = HolidayType.country_specific
-                    case 3: holiday_type = HolidayType.name_day
+                    case 0: 
+                        holiday_type = HolidayType.normal
+                        normal_counter += 1
+                    case 1: 
+                        holiday_type = HolidayType.church
+                        church_counter += 1
+                    case 2: 
+                        holiday_type = HolidayType.country_specific
+                        country_specific_counter += 1
+                    case 3: 
+                        holiday_type = HolidayType.name_day
+                        name_day_counter += 1
                     case default: raise Exception('Holiday type index overflow!')
 
                 elements.append((holiday_name, holiday_type, years_passed))
@@ -64,10 +78,10 @@ async def parse_site() -> None:
             Holiday.day == day).where(Holiday.month == month))
         for pending_holiday in elements:
             for saved_holiday in results:
-                if saved_holiday.name == pending_holiday[0] and saved_holiday.years_passed == pending_holiday[2]:
+                if saved_holiday.name == pending_holiday[0] and (saved_holiday.years_passed == pending_holiday[2] or saved_holiday.years_passed == None):
                     skip = True
                     break
-                elif saved_holiday.name == pending_holiday[0] and saved_holiday.years_passed != pending_holiday[2]:
+                elif saved_holiday.name == pending_holiday[0] and saved_holiday.years_passed != pending_holiday[2] and saved_holiday.years_passed != None:
                     saved_holiday.years_passed = pending_holiday[2]
                     session.add(saved_holiday)
                     updated_holidays += 1
@@ -81,7 +95,19 @@ async def parse_site() -> None:
             skip = False
             
         session.commit()
-
-    print(f'Added {new_holidays} and updated {updated_holidays} holidays.')
+    
+    if new_holidays != 0 or updated_holidays != 0:
+        print(f'Added {new_holidays} and updated {updated_holidays} holidays (no:{normal_counter}/co:{country_specific_counter}/ch:{church_counter}/na:{name_day_counter}).')
+        msg = 'Сайт успешно пропаршен.\n' \
+            f'Добавлено: <code>{new_holidays}</code>\n' \
+            f'Обновлено: <code>{updated_holidays}</code>\n' \
+            f'Обычные: <code>{normal_counter}</code>\n' \
+            f'Национальные: <code>{country_specific_counter}</code>\n' \
+            f'Церковные: <code>{church_counter}</code>\n' \
+            f'Именины: <code>{name_day_counter}</code>'
+        await bot.send_message(chat_id=ADMIN, text=msg)
+    else:
+        print(f'Site parsed, but holidays are already in db! {new_holidays}/{updated_holidays}')
+        return False
     
     return True

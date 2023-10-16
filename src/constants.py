@@ -4,7 +4,7 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.6' 
+VERSION = 'v1.7.0' # Struct of version is v<major_version(release)>.<small update(new feature)>.<bug fix>
 
 ADMIN = 897276284 # khivus' id (ADMIN ID)
 

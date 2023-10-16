@@ -10,6 +10,6 @@ async def process_parser(message: types.Message) -> None:
     if await parse_site():
         message_text = 'Сайт пропаршен и добавлен в БД.'
     else:
-        message_text = 'Сайт не удалось пропарсить.'
+        message_text = 'Сайт не удалось пропарсить или праздники уже есть в базе данных.'
 
     await message.answer(text=message_text)

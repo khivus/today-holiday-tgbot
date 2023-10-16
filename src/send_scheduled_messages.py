@@ -26,6 +26,5 @@ async def send_scheluded_holidays_message():
             if message:
                 success += 1
         if len(chats) != 0:
-            print(
-                f'At hour {hour}: {success} / {len(chats)} scheduled messages was send.')
+            print(f'At hour {hour}: {success} / {len(chats)} scheduled messages was send.')
         session.commit()
