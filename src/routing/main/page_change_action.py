@@ -3,7 +3,7 @@ from aiogram import types
 
 from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
 from src.routers import main_router
-from src.page_builder import build_pages
+from src.utility.page_builder import build_pages
 
 
 def get_holiday_message(page_index: int, pages: list[str]):

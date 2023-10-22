@@ -5,7 +5,8 @@ from sqlmodel import Session, select
 from src.constants import engine, bot
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
-from src.page_builder import build_pages
+from src.utility.page_builder import build_pages
+from src.utility.print_timestamp_builder import print_with_timestamp
 from src.routing.main.page_change_action import get_holiday_message
 
 
@@ -26,5 +27,5 @@ async def send_scheluded_holidays_message():
             if message:
                 success += 1
         if len(chats) != 0:
-            print(f'At hour {hour}: {success} / {len(chats)} scheduled messages was send.')
+            print_with_timestamp(f'At hour {hour}: {success} / {len(chats)} scheduled messages was send.')
         session.commit()

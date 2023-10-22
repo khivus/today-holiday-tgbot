@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
-from src.page_builder import build_pages
+from src.utility.page_builder import build_pages
 from src.routers import main_router
 from src.constants import engine
 from src.routing.main.page_change_action import get_holiday_message

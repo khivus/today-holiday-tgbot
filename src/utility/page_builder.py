@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from src.models.chat import Chat
 from src.models.holiday import Holiday, HolidayType
 from src.constants import engine
-from src.site_parser import parse_site
+from src.utility.site_parser import parse_site
 
 
 async def build_pages(chat_id: int):
@@ -26,9 +26,7 @@ async def build_pages(chat_id: int):
         results = session.exec(selected)
         
         if results.all() == []: # If site is not parsed somehow
-            if await parse_site():
-                print('Site parsed from page_builder!')
-            else:
+            if not await parse_site(additional_info='Site parser was started from page builder!\n'):
                 raise Exception('Error parsing site from page_builder')
             
         results = session.exec(selected)
