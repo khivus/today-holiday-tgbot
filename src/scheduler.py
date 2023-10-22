@@ -1,8 +1,8 @@
 import asyncio
 import pycron
 
-from src.send_scheduled_messages import send_scheluded_holidays_message
-from src.site_parser import parse_site
+from src.utility.send_scheduled_messages import send_scheluded_holidays_message
+from src.utility.site_parser import parse_site
 
 
 async def scheduler():

@@ -8,9 +8,10 @@ from user_agent import generate_user_agent
 from src.constants import ADMIN, bot
 from src.models.holiday import HolidayType, Holiday
 from src.constants import engine
+from src.utility.print_timestamp_builder import print_with_timestamp
 
 
-async def parse_site() -> None:
+async def parse_site(additional_info: str = '') -> None:
     url = 'https://kakoysegodnyaprazdnik.ru/'
 
     async with aiohttp.ClientSession() as session:
@@ -97,7 +98,7 @@ async def parse_site() -> None:
         session.commit()
     
     if new_holidays != 0 or updated_holidays != 0:
-        print(f'Added {new_holidays} and updated {updated_holidays} holidays (no:{normal_counter}/co:{country_specific_counter}/ch:{church_counter}/na:{name_day_counter}).')
+        print_with_timestamp(f'{additional_info}Added {new_holidays} and updated {updated_holidays} holidays (no:{normal_counter}/co:{country_specific_counter}/ch:{church_counter}/na:{name_day_counter}).')
         msg = 'Сайт успешно пропаршен.\n' \
             f'Добавлено: <code>{new_holidays}</code>\n' \
             f'Обновлено: <code>{updated_holidays}</code>\n' \
@@ -107,7 +108,7 @@ async def parse_site() -> None:
             f'Именины: <code>{name_day_counter}</code>'
         await bot.send_message(chat_id=ADMIN, text=msg)
     else:
-        print(f'Site parsed, but holidays are already in db! {new_holidays}/{updated_holidays}')
+        print_with_timestamp(f'{additional_info}Site parsed, but holidays are already in db! {new_holidays}/{updated_holidays}')
         return False
     
     return True

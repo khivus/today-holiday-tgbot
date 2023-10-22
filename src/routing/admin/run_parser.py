@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.filters import Command
 
 from src.routers import admin_router
-from src.site_parser import parse_site
+from src.utility.site_parser import parse_site
 
 
 @admin_router.message(Command('run_parser'))
