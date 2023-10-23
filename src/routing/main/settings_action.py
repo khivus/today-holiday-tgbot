@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.exceptions import TelegramForbiddenError
 from sqlmodel import Session, select
 
 from src.constants import engine
@@ -21,7 +22,6 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             chat.mailing_enabled = not chat.mailing_enabled
             msg = get_text(
                 additional_text=f'Рассылка теперь <code>{"включена" if chat.mailing_enabled else "выключена"}</code>.\n', chat=chat)
-            session.add(chat)
 
         elif callback_data.type == SettingType.MAILING_TIME:
             msg = 'Выберите час в который вы хотите получать рассылку:'
@@ -31,19 +31,16 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             chat.send_church_holidays = not chat.send_church_holidays
             msg = get_text(
                 additional_text=f'Церковные праздники теперь <code>{"включены" if chat.send_church_holidays else "выключены"}</code>.\n', chat=chat)
-            session.add(chat)
 
         elif callback_data.type == SettingType.SEND_COUNTRY_SPECIFIC:
             chat.send_country_specific = not chat.send_country_specific
             msg = get_text(
                 additional_text=f'Национальные праздники теперь <code>{"включены" if chat.send_country_specific else "выключены"}</code>.\n', chat=chat)
-            session.add(chat)
 
         elif callback_data.type == SettingType.SEND_NAME_DAYS:
             chat.send_name_days = not chat.send_name_days
             msg = get_text(
                 additional_text=f'Именины теперь <code>{"включены" if chat.send_name_days else "выключены"}</code>.\n', chat=chat)
-            session.add(chat)
 
         elif callback_data.type == SettingType.RESET:
             chat.mailing_enabled = False
@@ -54,17 +51,20 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
 
             msg = get_text(
                 additional_text='Все настройки были сброшены до заводских.\n', chat=chat)
-            session.add(chat)
 
         else:
             return
 
+        if not reply_markup:
+            reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
+        
+        try:
+            await query.message.edit_text(msg, reply_markup=reply_markup)
+        except:
+            pass
+
+        session.add(chat)
         session.commit()
-    
-    if not reply_markup:
-        reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
-    
-    await query.message.edit_text(msg, reply_markup=reply_markup)
 
 
 @main_router.callback_query(HourCallbackData.filter())
@@ -82,6 +82,12 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
             session.commit()
             msg = get_text(additional_text=f'Время рассылки было поменяно на: <code>{chat.mailing_time}:00</code>.\n', chat=chat)
             
-    reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
+        reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
 
-    await query.message.edit_text(text=msg, reply_markup=reply_markup)
+        try:
+            await query.message.edit_text(text=msg, reply_markup=reply_markup)
+        except:
+            pass
+
+        session.add(chat)
+        session.commit()

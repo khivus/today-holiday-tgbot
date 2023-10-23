@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.filters import Command
+from aiogram.exceptions import TelegramForbiddenError
 from sqlmodel import Session, select
 
 from src.keyboards.settings import build_settings_keyboard
@@ -28,8 +29,12 @@ async def process_settings(message: types.Message) -> None:
         chat = session.exec(select(Chat).where(
             Chat.id == message.chat.id)).one()
 
-    keyboard = build_settings_keyboard(chat_id=message.chat.id)
+        keyboard = build_settings_keyboard(chat_id=message.chat.id)
+        message_text = get_text(chat=chat)
+        
+        try:
+            await message.answer(text=message_text, reply_markup=keyboard)
+        except:
+            pass
 
-    text = get_text(chat=chat)
-
-    await message.answer(text=text, reply_markup=keyboard)
+        

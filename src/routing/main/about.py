@@ -12,5 +12,7 @@ async def process_about(message: types.Message) -> None:
         f'Версия бота: <code>{VERSION}</code>\n' \
         'Исходный код открытый и есть на <a href="https://github.com/khivus/today-holiday-tgbot">гитхабе</a>.\n' \
         'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.'
-
-    await message.answer(text=msg, disable_web_page_preview=True)
+    try:
+        await message.answer(text=msg, disable_web_page_preview=True)
+    except:
+        print('funny')
