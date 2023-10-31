@@ -1,6 +1,7 @@
 
 from aiogram import types
 from aiogram.filters import Command
+from aiogram.exceptions import TelegramForbiddenError
 from sqlmodel import Session, select
 
 from src.keyboards.page_change import build_pages_keyboard
@@ -17,12 +18,17 @@ async def process_holidays(message: types.Message) -> None:
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(
             Chat.id == message.chat.id)).one()
+
+        pages = await build_pages(chat_id=message.chat.id)
+        message_text = get_holiday_message(page_index=0, pages=pages)
+        keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
+
+        try:
+            await message.answer(text=message_text, reply_markup=keyboard)
+        except:
+            pass
+        
         chat.uses += 1
         session.add(chat)
         session.commit()
-
-    pages = await build_pages(chat_id=message.chat.id)
-    message_text = get_holiday_message(page_index=0, pages=pages)
-    keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
-
-    await message.answer(text=message_text, reply_markup=keyboard)
+    

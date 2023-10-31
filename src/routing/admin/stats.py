@@ -11,12 +11,15 @@ from src.constants import VERSION, engine
 async def process_stats(message: types.Message) -> None:
     total_chats = 0
     total_uses = 0
+    total_banned = 0
     with Session(engine) as session:
         chats = session.exec(select(Chat)).all()
         for chat in chats:
             total_chats += 1
             total_uses += chat.uses
+            total_banned += int(chat.banned)
     message_text = f'Версия бота: <code>{VERSION}</code>\n' \
         f'Суммарное количество чатов: <code>{total_chats}</code>\n' \
-        f'Суммарное количество использований: <code>{total_uses}</code>'
+        f'Суммарное количество использований: <code>{total_uses}</code>\n' \
+        f'Забанены: <code>{total_banned}</code>'
     await message.answer(text=message_text)

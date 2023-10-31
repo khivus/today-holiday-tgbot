@@ -26,7 +26,11 @@ async def process_change_pages_callback(query: types.CallbackQuery, callback_dat
     new_page_index = min(max(page_index, 0), max_index-1)
     message_text = get_holiday_message(page_index=new_page_index, pages=pages)
     keyboard = build_pages_keyboard(current_page_index=new_page_index, max_page_index=max_index)
-    if new_page_index == page_index:
-        await query.message.edit_text(text=message_text, reply_markup=keyboard)
-    else:
-        await query.answer()
+    
+    try:
+        if new_page_index == page_index:
+            await query.message.edit_text(text=message_text, reply_markup=keyboard)
+        else:
+            await query.answer()
+    except:
+        pass

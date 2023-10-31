@@ -8,10 +8,12 @@ from user_agent import generate_user_agent
 from src.constants import ADMIN, bot
 from src.models.holiday import HolidayType, Holiday
 from src.constants import engine
-from src.utility.print_timestamp_builder import print_with_timestamp
+from src.utility.print_builder import better_print
 
 
 async def parse_site(additional_info: str = '') -> None:
+    time_start = datetime.datetime.now()
+    
     url = 'https://kakoysegodnyaprazdnik.ru/'
 
     async with aiohttp.ClientSession() as session:
@@ -70,45 +72,35 @@ async def parse_site(additional_info: str = '') -> None:
     today = datetime.date.today()
     day = today.day
     month = today.month
-    new_holidays = 0
-    updated_holidays = 0
-    skip = False
+    new_holidays = len(elements)
 
     with Session(engine) as session:
         results = session.exec(select(Holiday).where(
             Holiday.day == day).where(Holiday.month == month))
-        for pending_holiday in elements:
-            for saved_holiday in results:
-                if saved_holiday.name == pending_holiday[0] and (saved_holiday.years_passed == pending_holiday[2] or saved_holiday.years_passed == None):
-                    skip = True
-                    break
-                elif saved_holiday.name == pending_holiday[0] and saved_holiday.years_passed != pending_holiday[2] and saved_holiday.years_passed != None:
-                    saved_holiday.years_passed = pending_holiday[2]
-                    session.add(saved_holiday)
-                    updated_holidays += 1
-                    skip = True
-                    break
-            if not skip:
-                holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], years_passed=pending_holiday[2], day=day, month=month)
-                session.add(holiday)
-                new_holidays += 1
+        
+        for saved_holiday in results:
+            session.delete(saved_holiday)
             
-            skip = False
+        for pending_holiday in elements:
+            holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], years_passed=pending_holiday[2], day=day, month=month)
+            session.add(holiday)
             
         session.commit()
     
-    if new_holidays != 0 or updated_holidays != 0:
-        print_with_timestamp(f'{additional_info}Added {new_holidays} and updated {updated_holidays} holidays (no:{normal_counter}/co:{country_specific_counter}/ch:{church_counter}/na:{name_day_counter}).')
+    time_end = datetime.datetime.now()
+    time_diff = int((time_end - time_start).total_seconds() * 1000)
+    
+    if new_holidays != 0:
+        better_print(text=f'{additional_info}Added {new_holidays} holidays (no:{normal_counter}/co:{country_specific_counter}/ch:{church_counter}/na:{name_day_counter})', time_diff=time_diff)
         msg = 'Сайт успешно пропаршен.\n' \
             f'Добавлено: <code>{new_holidays}</code>\n' \
-            f'Обновлено: <code>{updated_holidays}</code>\n' \
             f'Обычные: <code>{normal_counter}</code>\n' \
             f'Национальные: <code>{country_specific_counter}</code>\n' \
             f'Церковные: <code>{church_counter}</code>\n' \
             f'Именины: <code>{name_day_counter}</code>'
         await bot.send_message(chat_id=ADMIN, text=msg)
     else:
-        print_with_timestamp(f'{additional_info}Site parsed, but holidays are already in db! {new_holidays}/{updated_holidays}')
+        better_print(text=f'{additional_info}Site don\'t parsed!', time_diff=time_diff)
         return False
     
     return True
