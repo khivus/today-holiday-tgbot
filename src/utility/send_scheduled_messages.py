@@ -1,18 +1,19 @@
 import datetime
 
 from sqlmodel import Session, select
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram import exceptions
 
 from src.constants import engine, bot
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
 from src.utility.page_builder import build_pages
-from src.utility.print_timestamp_builder import print_with_timestamp
+from src.utility.print_builder import better_print
 from src.routing.main.page_change_action import get_holiday_message
 
 
 async def send_scheluded_holidays_message():
-    hour = datetime.datetime.now().hour
+    time_start = datetime.datetime.now()
+    hour = time_start.hour
     success = 0
     with Session(engine) as session:
         chats = session.exec(select(Chat).where(Chat.mailing_time == hour).where(Chat.mailing_enabled).where(Chat.banned == False)).all()
@@ -23,15 +24,20 @@ async def send_scheluded_holidays_message():
             
             try:
                 await bot.send_message(chat_id=chat.id, text=message_text, reply_markup=keyboard)
-            except TelegramForbiddenError:
+            except exceptions.TelegramForbiddenError as e:
                 chat.banned = True
-                print_with_timestamp(f'Chat {chat.id} is banned')
+            except exceptions.TelegramAPIError as e:
+                better_print(text=e.message)
+                continue
                 
             if not chat.banned:
                 success += 1
                 chat.uses += 1
             session.add(chat)
             
+        time_end = datetime.datetime.now()
+        time_diff = int((time_end - time_start).total_seconds() * 1000)
+            
         if len(chats) != 0:
-            print_with_timestamp(f'At hour {hour}: {success} / {len(chats)} scheduled messages was send.')
+            better_print(text=f'At hour {hour}: {success} / {len(chats)} scheduled messages was send', time_diff=time_diff)
         session.commit()

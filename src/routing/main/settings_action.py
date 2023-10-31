@@ -51,20 +51,22 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
 
             msg = get_text(
                 additional_text='Все настройки были сброшены до заводских.\n', chat=chat)
-
+        
         else:
             return
 
-        if not reply_markup:
-            reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
-        
-        try:
-            await query.message.edit_text(msg, reply_markup=reply_markup)
-        except:
-            pass
-
         session.add(chat)
         session.commit()
+
+    if not reply_markup:
+        reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
+    
+    try:
+        await query.message.edit_text(msg, reply_markup=reply_markup)
+    except:
+        pass
+
+
 
 
 @main_router.callback_query(HourCallbackData.filter())
@@ -81,13 +83,15 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
             session.add(chat)
             session.commit()
             msg = get_text(additional_text=f'Время рассылки было поменяно на: <code>{chat.mailing_time}:00</code>.\n', chat=chat)
-            
-        reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
-
-        try:
-            await query.message.edit_text(text=msg, reply_markup=reply_markup)
-        except:
-            pass
 
         session.add(chat)
         session.commit()
+            
+    reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
+
+    try:
+        await query.message.edit_text(text=msg, reply_markup=reply_markup)
+    except:
+        pass
+
+

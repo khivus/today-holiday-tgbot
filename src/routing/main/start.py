@@ -1,7 +1,6 @@
 from aiogram import types
 from aiogram.filters import Command
 from sqlmodel import Session, select
-from aiogram.exceptions import TelegramForbiddenError
 
 from src.constants import engine
 from src.models.chat import Chat
@@ -19,12 +18,13 @@ async def process_start(message: types.Message) -> None:
                 'Отправь /holidays чтобы узнать, какой сегодня праздник.\n' \
                 'Включить ежедневную авторассылку праздников можно в /settings.\n' \
                 'Для вопросов и предложений: @khivus.\n' \
-                'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.'
+                'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.\n' \
+                'Бот всё ещё в активной разработке, поэтому возможны сбои в работе!'
                 
             try:
                 await message.answer(text=message_text, disable_web_page_preview=True)
-            except TelegramForbiddenError:
-                chat.banned = True
+            except:
+                pass
             
             session.add(chat)
             session.commit()
