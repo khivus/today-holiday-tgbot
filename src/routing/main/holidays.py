@@ -1,11 +1,10 @@
-
 from aiogram import types
 from aiogram.filters import Command
-from aiogram.exceptions import TelegramForbiddenError
 from sqlmodel import Session, select
 
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
+from src.utility.chat_check import chat_check
 from src.utility.page_builder import build_pages
 from src.routers import main_router
 from src.constants import engine
@@ -14,10 +13,10 @@ from src.routing.main.page_change_action import get_holiday_message
 
 @main_router.message(Command('holidays'))
 async def process_holidays(message: types.Message) -> None:
-
+    chat_check(chat_id=message.chat.id, migrate_from_chat_id=message.migrate_from_chat_id, migrate_to_chat_id=message.migrate_to_chat_id)
+    
     with Session(engine) as session:
-        chat = session.exec(select(Chat).where(
-            Chat.id == message.chat.id)).one()
+        chat = session.exec(select(Chat).where(Chat.id == message.chat.id)).one()
 
         pages = await build_pages(chat_id=message.chat.id)
         message_text = get_holiday_message(page_index=0, pages=pages)

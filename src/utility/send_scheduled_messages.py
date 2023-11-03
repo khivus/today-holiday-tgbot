@@ -6,6 +6,7 @@ from aiogram import exceptions
 from src.constants import engine, bot
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
+from src.utility.chat_check import chat_check
 from src.utility.page_builder import build_pages
 from src.utility.print_builder import better_print
 from src.routing.main.page_change_action import get_holiday_message
@@ -26,8 +27,11 @@ async def send_scheluded_holidays_message():
                 await bot.send_message(chat_id=chat.id, text=message_text, reply_markup=keyboard)
             except exceptions.TelegramForbiddenError as e:
                 chat.banned = True
+            except exceptions.TelegramMigrateToChat as e:
+                chat_check(chat_id=e.migrate_to_chat_id, migrate_to_chat_id=e.migrate_to_chat_id, migrate_from_chat_id=chat.id)
+                await bot.send_message(chat_id=e.migrate_to_chat_id, text=message_text, reply_markup=keyboard)
             except exceptions.TelegramAPIError as e:
-                better_print(text=e.message)
+                better_print(text=f'{e.method}~{e.message}')
                 continue
                 
             if not chat.banned:

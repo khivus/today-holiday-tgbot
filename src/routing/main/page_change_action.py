@@ -3,6 +3,7 @@ from aiogram import types
 
 from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
 from src.routers import main_router
+from src.utility.chat_check import chat_check
 from src.utility.page_builder import build_pages
 
 
@@ -20,6 +21,8 @@ def get_holiday_message(page_index: int, pages: list[str]):
 
 @main_router.callback_query(PagesCallbackData.filter())
 async def process_change_pages_callback(query: types.CallbackQuery, callback_data: PagesCallbackData):
+    chat_check(chat_id=query.message.chat.id, migrate_from_chat_id=query.message.migrate_from_chat_id, migrate_to_chat_id=query.message.migrate_to_chat_id)
+    
     pages = await build_pages(chat_id=query.message.chat.id)
     max_index = len(pages)
     page_index = callback_data.current_page_index

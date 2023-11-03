@@ -10,7 +10,7 @@ from src.routing.admin.start_message import send_successful_start_message
 from src.scheduler import scheduler
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 
 
 async def main():
