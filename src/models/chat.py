@@ -11,4 +11,3 @@ class Chat(SQLModel, table=True):
     send_country_specific: bool = Field(default=True)
     send_name_days: bool = Field(default=True)
     uses: int = Field(default=0)
-    banned: bool = Field(default=False)

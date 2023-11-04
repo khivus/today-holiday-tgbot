@@ -3,12 +3,12 @@ from aiogram.filters import Command
 
 from src.routers import main_router
 from src.constants import VERSION
-from src.utility.chat_check import chat_check
+from src.utility.chat_check import is_group_in_db
 
 
 @main_router.message(Command("about"))
 async def process_about(message: types.Message) -> None:
-    chat_check(chat_id=message.chat.id, migrate_from_chat_id=message.migrate_from_chat_id, migrate_to_chat_id=message.migrate_to_chat_id)
+    is_group_in_db(chat_id=message.chat.id)
     msg = 'Я - Какой сегодня праздник бот!\n' \
         'Для вопросов и предложений: @khivus\n' \
         f'Версия бота: <code>{VERSION}</code>\n' \

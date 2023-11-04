@@ -7,12 +7,12 @@ from src.keyboards.settings import SettingType, SettingsCallbackData, build_sett
 from src.models.chat import Chat
 from src.routers import main_router
 from src.routing.main.settings import get_text
-from src.utility.chat_check import chat_check
+from src.utility.chat_check import is_group_in_db
 
 
 @main_router.callback_query(SettingsCallbackData.filter())
 async def process_setting_callback(query: types.CallbackQuery, callback_data: SettingsCallbackData):
-    chat_check(chat_id=query.message.chat.id, migrate_from_chat_id=query.message.migrate_from_chat_id, migrate_to_chat_id=query.message.migrate_to_chat_id)
+    is_group_in_db(chat_id=query.message.chat.id)
     reply_markup = None
     
     with Session(engine) as session:
@@ -65,7 +65,7 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
 
 @main_router.callback_query(HourCallbackData.filter())
 async def process_hours_callback(query: types.CallbackQuery, callback_data: HourCallbackData):
-    chat_check(chat_id=query.message.chat.id, migrate_from_chat_id=query.message.migrate_from_chat_id, migrate_to_chat_id=query.message.migrate_to_chat_id)
+    is_group_in_db(chat_id=query.message.chat.id)
     
     hour = callback_data.chosen_hour
     

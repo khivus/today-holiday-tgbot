@@ -7,7 +7,7 @@ from src.keyboards.settings import build_settings_keyboard
 from src.models.chat import Chat
 from src.routers import main_router
 from src.constants import engine
-from src.utility.chat_check import chat_check
+from src.utility.chat_check import is_group_in_db
 
 
 def get_text(chat: Chat, additional_text: str = '') -> str:
@@ -26,7 +26,7 @@ def get_text(chat: Chat, additional_text: str = '') -> str:
 
 @main_router.message(Command("settings"))
 async def process_settings(message: types.Message) -> None:
-    chat_check(chat_id=message.chat.id, migrate_from_chat_id=message.migrate_from_chat_id, migrate_to_chat_id=message.migrate_to_chat_id)
+    is_group_in_db(chat_id=message.chat.id)
     
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(Chat.id == message.chat.id)).one()
