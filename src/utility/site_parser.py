@@ -1,20 +1,17 @@
 import aiohttp
 import datetime
+import re
+import logging as log
 
 from bs4 import BeautifulSoup
 from sqlmodel import Session, select
 from user_agent import generate_user_agent
 
-from src.constants import ADMIN, bot
 from src.models.holiday import HolidayType, Holiday
 from src.constants import engine
-from src.utility.print_builder import better_print
 
 
-async def parse_site(additional_info: str = '') -> None:
-    time_start = datetime.datetime.now()
-    
-    url = 'https://kakoysegodnyaprazdnik.ru/'
+async def parse_site(url: str = 'https://kakoysegodnyaprazdnik.ru/', *, additional_info: str = '', add_to_db: bool = True, date: list[int] = None) -> None:
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url=url, headers={'User-Agent': generate_user_agent()}) as response:
@@ -25,10 +22,6 @@ async def parse_site(additional_info: str = '') -> None:
 
     elements: list[str] = []
     i = 0
-    
-    normal_counter = 0
-    church_counter = 0
-    country_specific_counter = 0
     name_day_counter = 0
 
     for element in listl:
@@ -55,52 +48,63 @@ async def parse_site(additional_info: str = '') -> None:
                 match i:
                     case 0: 
                         holiday_type = HolidayType.normal
-                        normal_counter += 1
                     case 1: 
                         holiday_type = HolidayType.church
-                        church_counter += 1
                     case 2: 
                         holiday_type = HolidayType.country_specific
-                        country_specific_counter += 1
                     case 3: 
                         holiday_type = HolidayType.name_day
                         name_day_counter += 1
-                    case default: raise Exception('Holiday type index overflow!')
 
-                elements.append((holiday_name, holiday_type, years_passed))
-
-    today = datetime.date.today()
-    day = today.day
-    month = today.month
-    new_holidays = len(elements)
-
-    with Session(engine) as session:
-        results = session.exec(select(Holiday).where(
-            Holiday.day == day).where(Holiday.month == month))
-        
-        for saved_holiday in results:
-            session.delete(saved_holiday)
-            
-        for pending_holiday in elements:
-            holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], years_passed=pending_holiday[2], day=day, month=month)
-            session.add(holiday)
-            
-        session.commit()
+                elements.append([holiday_name, holiday_type, years_passed])
     
-    time_end = datetime.datetime.now()
-    time_diff = int((time_end - time_start).total_seconds() * 1000)
-    
-    if new_holidays != 0:
-        better_print(text=f'{additional_info}Added {new_holidays} holidays (no:{normal_counter}/co:{country_specific_counter}/ch:{church_counter}/na:{name_day_counter})', time_diff=time_diff)
-        msg = 'Сайт успешно пропаршен.\n' \
-            f'Добавлено: <code>{new_holidays}</code>\n' \
-            f'Обычные: <code>{normal_counter}</code>\n' \
-            f'Национальные: <code>{country_specific_counter}</code>\n' \
-            f'Церковные: <code>{church_counter}</code>\n' \
-            f'Именины: <code>{name_day_counter}</code>'
-        await bot.send_message(chat_id=ADMIN, text=msg)
-    else:
-        better_print(text=f'{additional_info}Site don\'t parsed!', time_diff=time_diff)
+    if len(elements) == 0:
+        log.error(f'{additional_info}Site don\'t parsed!')
         return False
+    
+    church_pattern1 = r'^(День памяти|Собор|Католический|Буддийский|Зороастрийский|Праздник иконы Божией Матери).*'
+    church_pattern2 = r'(иконы Божией Матери)$'
+    country_specific_pattern = r'.*( - ).*'
+    name_day_pattern = r'^Именины.*'
+    bad_site = False
+    
+    if name_day_counter == 0:
+        for holiday in elements:
+            if re.match(name_day_pattern, holiday[0]) and holiday[1] == HolidayType.country_specific:
+                bad_site = True
+                break
+            
+        if bad_site:
+            for holiday in elements:
+                holiday_type = holiday[1]
+                
+                if re.match(church_pattern1, holiday[0]) or re.match(church_pattern2, holiday[0]): # church
+                    holiday_type = HolidayType.church
+                elif holiday_type != HolidayType.normal and re.match(country_specific_pattern, holiday[0]): # country_specific
+                    holiday_type = HolidayType.country_specific
+                elif re.match(name_day_pattern, holiday[0]) or holiday_type == HolidayType.country_specific: # name_days
+                    holiday_type = HolidayType.name_day
+                else:
+                    holiday_type = HolidayType.normal
+                    
+                holiday[1] = holiday_type
+
+    if add_to_db:
+        if not date:
+            today = datetime.date.today()
+            date = [today.day, today.month]
+        
+        with Session(engine) as session:
+            results = session.exec(select(Holiday).where(
+                Holiday.day == date[0]).where(Holiday.month == date[1]))
+            
+            for saved_holiday in results:
+                session.delete(saved_holiday)
+                
+            for pending_holiday in elements:
+                holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], years_passed=pending_holiday[2], day=date[0], month=date[1])
+                session.add(holiday)
+                
+            session.commit()
     
     return True
