@@ -1,38 +1,28 @@
 from aiogram import types
 from aiogram.filters import Command
-from sqlmodel import Session, select
 
-from src.constants import engine
-from src.models.chat import Chat
 from src.routers import main_router
 from src.routing.main.holidays import process_holidays
+from src.utility.chat_check import is_group_in_db
+from src.utility.json_update import json_update
 
 
 @main_router.message(Command('start'))
 async def process_start(message: types.Message) -> None:
-    with Session(engine) as session:
-        if not session.exec(select(Chat).where(Chat.id == message.chat.id)).all():
-            chat = Chat(id=message.chat.id)
-
-            message_text = 'Я - Какой сегодня праздник бот!\n' \
-                'Отправь /holidays чтобы узнать, какой сегодня праздник.\n' \
-                'Включить ежедневную авторассылку праздников можно в /settings.\n' \
-                'Для вопросов и предложений: @khivus.\n' \
-                'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.\n' \
-                'Бот всё ещё в активной разработке, поэтому возможны сбои в работе!'
-                
-            try:
-                await message.answer(text=message_text, disable_web_page_preview=True)
-            except:
-                pass
-            
-            session.add(chat)
-            session.commit()
-                
-        else:
-            chat = Chat(id=message.chat.id)
-            if chat.banned:
-                chat.banned = False
-                session.add(chat)
-                session.commit()
-            await process_holidays(message)
+    if not is_group_in_db(chat_id=message.chat.id):
+        message_text = 'Я - Какой сегодня праздник бот!\n' \
+            'Отправь /holidays чтобы узнать, какой сегодня праздник.\n' \
+            'Включить ежедневную авторассылку праздников можно в /settings.\n' \
+            'Для вопросов и предложений: @khivus.\n' \
+            'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.\n' \
+            'Бот всё ещё в активной разработке, поэтому возможны сбои в работе!'
+        
+        json_update('new_chats')
+        
+        try:
+            await message.answer(text=message_text, disable_web_page_preview=True)
+        except:
+            pass
+        
+    else:
+        await process_holidays(message)

@@ -4,7 +4,6 @@ from . import (
     settings,
     settings_action,
     page_change_action,
-    about
+    about,
+    tomorrow
 )
-
-# TODO Make /search command

@@ -1,5 +1,6 @@
 from . import (
     run_parser,
     stats,
-    start_message
+    start_message,
+    daily_stats
 )

@@ -1,4 +1,5 @@
 import datetime
+import logging as log
 
 from sqlmodel import Session, select
 
@@ -8,12 +9,14 @@ from src.constants import engine
 from src.utility.site_parser import parse_site
 
 
-async def build_pages(chat_id: int):
+async def build_pages(chat_id: int, date: list[int] = None):
     CHUNK_SIZE = 13
     CHUNK_OVERHEAD = 6
-    today = datetime.date.today()
-    day = today.day
-    month = today.month
+    
+    if not date:
+        today = datetime.date.today()
+        date = [today.day, today.month]
+    
     holidays: dict = {
         'normal': [],
         'country_specific' : ['------- Национальные праздники -------'],
@@ -22,12 +25,11 @@ async def build_pages(chat_id: int):
     }
     
     with Session(engine) as session:
-        selected = select(Holiday).where(Holiday.day == day).where(Holiday.month == month)
+        selected = select(Holiday).where(Holiday.day == date[0]).where(Holiday.month == date[1])
         results = session.exec(selected)
         
         if results.all() == []: # If site is not parsed somehow
-            if not await parse_site(additional_info='Site parser was started from page builder!\n'):
-                raise Exception('Error parsing site from page_builder')
+            await parse_site(additional_info='Site parser was started from page builder!\n')
             
         results = session.exec(selected)
         chat = session.exec(select(Chat).where(Chat.id == chat_id)).one()

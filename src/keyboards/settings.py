@@ -24,8 +24,7 @@ class SettingsCallbackData(CallbackData, prefix='generate'):
 def build_settings_keyboard(chat_id: int):
     builder = InlineKeyboardBuilder()
     with Session(engine) as session:
-        chat = session.exec(select(Chat).where(
-            Chat.id == chat_id)).one()
+        chat = session.exec(select(Chat).where(Chat.id == chat_id)).one()
         
         builder.button(text=f'{"✅" if chat.mailing_enabled else "❌"} Рассылка', callback_data=SettingsCallbackData(
             type=SettingType.MAILING_ENABLED))

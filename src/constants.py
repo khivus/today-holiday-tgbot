@@ -4,7 +4,10 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.10.0' # Struct of version is v<major_version(release)>.<small update(new feature)>.<bug fix>
+VERSION = 'v1.11.1'
+
+# TODO Поиск праздника
+# TODO Сделать обход капчи
 
 ADMIN = 897276284 # khivus' id (ADMIN ID)
 
@@ -14,3 +17,10 @@ dp = Dispatcher()
 
 db_path = "resources/database.db"
 engine = create_engine("sqlite:///" + db_path)
+
+json_template = {
+    'new_chats' : 0,
+    'uses' : 0,
+    'succeeded_messages' : 0,
+    'all_scheduled_messages' : 0
+}
