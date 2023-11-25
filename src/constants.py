@@ -4,7 +4,12 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.10.4'
+VERSION = 'v1.11.0'
+
+# TODO Поиск праздника
+# TODO Какой завтра праздник
+# TODO Ежедневная стата: успешной рассылки, использований за день, новых пользователей
+# TODO Сделать обход капчи
 
 ADMIN = 897276284 # khivus' id (ADMIN ID)
 

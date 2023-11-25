@@ -14,7 +14,7 @@ from src.routing.main.page_change_action import get_holiday_message
 
 async def send_scheluded_holidays_message():
     hour = datetime.datetime.now().hour
-    success = 0
+    # success = 0
     with Session(engine) as session:
         chats = session.exec(select(Chat).where(Chat.mailing_time == hour).where(Chat.mailing_enabled)).all()
         for chat in chats:
@@ -24,7 +24,7 @@ async def send_scheluded_holidays_message():
             
             try:
                 await bot.send_message(chat_id=chat.id, text=message_text, reply_markup=keyboard)
-                success += 1
+                # success += 1
                 chat.uses += 1
                 session.add(chat)
             except exceptions.TelegramForbiddenError as e:

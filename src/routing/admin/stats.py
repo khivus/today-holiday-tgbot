@@ -17,7 +17,7 @@ async def process_stats(message: types.Message) -> None:
         for chat in chats:
             total_chats += 1
             total_uses += chat.uses
-            total_with_mailing += 1
+            total_with_mailing += chat.mailing_enabled
     message_text = f'Версия бота: <code>{VERSION}</code>\n' \
         f'Всего чатов: <code>{total_chats}</code>\n' \
         f'Всего использований: <code>{total_uses}</code>\n' \
