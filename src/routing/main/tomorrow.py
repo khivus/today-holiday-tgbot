@@ -8,6 +8,7 @@ from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
 from src.models.holiday import Holiday
 from src.utility.chat_check import is_group_in_db
+from src.utility.json_update import json_update
 from src.utility.page_builder import build_pages
 from src.routers import main_router
 from src.constants import engine
@@ -44,4 +45,5 @@ async def process_tomorrow(message: types.Message) -> None:
         chat.uses += 1
         session.add(chat)
         session.commit()
+        json_update('uses')
     

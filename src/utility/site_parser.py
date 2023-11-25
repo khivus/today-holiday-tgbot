@@ -88,6 +88,10 @@ async def parse_site(url: str = 'https://kakoysegodnyaprazdnik.ru/', *, addition
                     holiday_type = HolidayType.normal
                     
                 holiday[1] = holiday_type
+    else:
+        for holiday in elements:
+            if (re.match(church_pattern1, holiday[0]) or re.match(church_pattern2, holiday[0])) and holiday[1] == HolidayType.normal:
+                holiday[1] = HolidayType.church 
 
     if add_to_db:
         if not date:

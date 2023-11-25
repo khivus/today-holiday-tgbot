@@ -8,13 +8,14 @@ from src.constants import engine, bot
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
 from src.utility.chat_check import is_group_in_db
+from src.utility.json_update import json_update
 from src.utility.page_builder import build_pages
 from src.routing.main.page_change_action import get_holiday_message
 
 
 async def send_scheluded_holidays_message():
     hour = datetime.datetime.now().hour
-    # success = 0
+    success = 0
     with Session(engine) as session:
         chats = session.exec(select(Chat).where(Chat.mailing_time == hour).where(Chat.mailing_enabled)).all()
         for chat in chats:
@@ -24,7 +25,7 @@ async def send_scheluded_holidays_message():
             
             try:
                 await bot.send_message(chat_id=chat.id, text=message_text, reply_markup=keyboard)
-                # success += 1
+                success += 1
                 chat.uses += 1
                 session.add(chat)
             except exceptions.TelegramForbiddenError as e:
@@ -39,3 +40,6 @@ async def send_scheluded_holidays_message():
                 continue
             
             session.commit()
+    
+    json_update('succeeded_messages', success)
+    json_update('all_scheduled_messages', len(chats))
