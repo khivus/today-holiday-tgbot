@@ -8,7 +8,7 @@ from src.constants import ADMIN, VERSION, bot, json_template
 
 
 @admin_router.message(Command('dstats'))
-async def process_daily_stats(message: types.Message) -> None:
+async def process_daily_stats(message: types.Message = None) -> None:
     
     with open('daily_stats.json', 'r') as file:
         daily_data = json.load(file)
@@ -18,8 +18,9 @@ async def process_daily_stats(message: types.Message) -> None:
         f'Новых чатов: <code>{daily_data["new_chats"]}</code>\n' \
         f'Использований: <code>{daily_data["uses"]}</code>\n' \
         f'Успешных рассылок: <code>{daily_data["succeeded_messages"]}/{daily_data["all_scheduled_messages"]}</code>'
-        
-    with open('daily_stats.json', 'w') as file:
-        json.dump(json_template, file)
+    
+    if not message:
+        with open('daily_stats.json', 'w') as file:
+            json.dump(json_template, file)
     
     await bot.send_message(chat_id=ADMIN, text=message_text)
