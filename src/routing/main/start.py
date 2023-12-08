@@ -12,8 +12,9 @@ async def process_start(message: types.Message) -> None:
     if not is_group_in_db(chat_id=message.chat.id):
         message_text = 'Я - Какой сегодня праздник бот!\n' \
             'Отправь /holidays чтобы узнать, какой сегодня праздник.\n' \
+            'Если хочешь узнать какие завтра праздники, используй /tomorrow.\n' \
             'Включить ежедневную авторассылку праздников можно в /settings.\n' \
-            'Для вопросов и предложений: @khivus.\n' \
+            'Для вопросов и предложений: @reveverless.\n' \
             'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.\n' \
             'Бот всё ещё в активной разработке, поэтому возможны сбои в работе!'
         

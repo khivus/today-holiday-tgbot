@@ -63,7 +63,7 @@ async def parse_site(url: str = 'https://kakoysegodnyaprazdnik.ru/', *, addition
         return False
     
     church_pattern1 = r'^(День памяти|Собор|Католический|Буддийский|Зороастрийский|Праздник иконы Божией Матери).*'
-    church_pattern2 = r'(иконы Божией Матери)$'
+    church_pattern2 = r'(иконы Божией Матери|Пресвятой Богородицы|Богородицы)$'
     country_specific_pattern = r'.*( - ).*'
     name_day_pattern = r'^Именины.*'
     bad_site = False
