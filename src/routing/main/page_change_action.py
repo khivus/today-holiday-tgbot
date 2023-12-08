@@ -14,10 +14,9 @@ def get_holiday_message(page_index: int, pages: list[str], date: list[int] = Non
         date = [today.day, today.month]
     
     max_index = len(pages)
-    msg_start = f'Праздники на {date[0]:02}.{date[1]:02}:\n' \
-        '--------------------------------------------------\n'
-    msg_end = '--------------------------------------------------\n' \
-        f'Страница {page_index+1}/{max_index}'
+    lbreak: str = '\n'
+    msg_start = f'Праздники на {date[0]:02}.{date[1]:02}:\n{lbreak:->50}'
+    msg_end = f'{lbreak:->50}Страница {page_index+1}/{max_index}'
     page = pages[page_index]
     message = msg_start + page + msg_end
     return message

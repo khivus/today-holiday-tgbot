@@ -16,5 +16,5 @@ class Holiday(SQLModel, table=True):
     name: str
     type: Optional[HolidayType] = Field(sa_column=HolidayType)
     years_passed: Optional[str] = Field(default=None)
-    day: int
-    month: int
+    day: int = Field(index=True)
+    month: int = Field(index=True)

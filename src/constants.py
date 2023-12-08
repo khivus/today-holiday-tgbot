@@ -4,12 +4,13 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.11.2'
+VERSION = 'v1.11.3'
 
 # TODO Поиск праздника
 # TODO Сделать обход капчи
+# TODO Ридмишка
 
-ADMIN = 897276284 # khivus' id (ADMIN ID)
+ADMIN = 897276284 # ADMIN ID
 
 config = Config()
 bot = Bot(token=config.API_TOKEN, parse_mode='HTML')
