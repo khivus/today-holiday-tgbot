@@ -4,11 +4,14 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.11.3'
+VERSION = 'v1.12.0b1'
 
 # TODO Поиск праздника
-# TODO Сделать обход капчи
 # TODO Ридмишка
+
+# For start in PowerShell:
+# $env:API_TOKEN = ""
+# python -m src
 
 ADMIN = 897276284 # ADMIN ID
 

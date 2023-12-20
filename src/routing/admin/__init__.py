@@ -2,5 +2,6 @@ from . import (
     run_parser,
     stats,
     start_message,
-    daily_stats
+    daily_stats,
+    create_db_backup
 )

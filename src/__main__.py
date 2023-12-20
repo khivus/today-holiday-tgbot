@@ -11,7 +11,7 @@ from src.routing.admin.start_message import send_successful_start_message
 from src.scheduler import scheduler
 
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 
 
 async def main():
@@ -32,4 +32,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-

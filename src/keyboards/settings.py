@@ -13,7 +13,6 @@ class SettingType(enum.Enum):
     MAILING_TIME = 'mailing_time'
     SEND_CHURCH_HOLIDAYS = 'send_church_holidays'
     SEND_COUNTRY_SPECIFIC = 'send_country_specific'
-    SEND_NAME_DAYS = 'send_name_days'
     RESET = 'reset'
 
 
@@ -34,11 +33,9 @@ def build_settings_keyboard(chat_id: int):
             type=SettingType.SEND_CHURCH_HOLIDAYS))
         builder.button(text=f'{"✅" if chat.send_country_specific else "❌"} Национальные', callback_data=SettingsCallbackData(
             type=SettingType.SEND_COUNTRY_SPECIFIC))
-        builder.button(text=f'{"✅" if chat.send_name_days else "❌"} Именины', callback_data=SettingsCallbackData(
-            type=SettingType.SEND_NAME_DAYS))
         builder.button(text='🔄 Сбросить настройки до заводских', callback_data=SettingsCallbackData(
             type=SettingType.RESET))
 
-    builder.adjust(1, 2, 2, 1)
+    builder.adjust(1, 1, 2, 1)
 
     return builder.as_markup()

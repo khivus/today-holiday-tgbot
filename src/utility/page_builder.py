@@ -21,7 +21,6 @@ async def build_pages(chat_id: int, date: list[int] = None):
         'normal': [],
         'country_specific' : ['------- Национальные праздники -------'],
         'church' : ['------- Церковные праздники -------'],
-        'name_day' : ['------- Именины -------']
     }
     
     with Session(engine) as session:
@@ -29,15 +28,13 @@ async def build_pages(chat_id: int, date: list[int] = None):
         results = session.exec(selected)
         
         if results.all() == []: # If site is not parsed somehow
-            await parse_site(additional_info='Site parser was started from page builder!\n')
+            await parse_site()
             
         results = session.exec(selected)
         chat = session.exec(select(Chat).where(Chat.id == chat_id)).one()
         
         for element in results:
             holiday_text = f'● {element.name}'
-            if element.years_passed is not None:
-                holiday_text += f' ({element.years_passed})'
             
             if element.type == HolidayType.normal:
                 holidays['normal'].append(holiday_text)
@@ -45,8 +42,6 @@ async def build_pages(chat_id: int, date: list[int] = None):
                 holidays['church'].append(holiday_text)
             elif element.type == HolidayType.country_specific and chat.send_country_specific:
                 holidays['country_specific'].append(holiday_text)
-            elif element.type == HolidayType.name_day and chat.send_name_days:
-                holidays['name_day'].append(holiday_text)
                 
     for key in holidays.keys():
         if key == 'normal':

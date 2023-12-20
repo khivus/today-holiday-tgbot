@@ -14,8 +14,7 @@ async def process_start(message: types.Message) -> None:
             'Отправь /holidays чтобы узнать, какой сегодня праздник.\n' \
             'Если хочешь узнать какие завтра праздники, используй /tomorrow.\n' \
             'Включить ежедневную авторассылку праздников можно в /settings.\n' \
-            'Для вопросов и предложений: @reveverless.\n' \
-            'Праздники взяты с этого <a href="https://kakoysegodnyaprazdnik.ru/">сайта</a>.\n' \
+            'Для вопросов и предложений: @kakoy_prazdnik_bot_support.\n' \
             'Бот всё ещё в активной разработке, поэтому возможны сбои в работе!'
         
         json_update('new_chats')
