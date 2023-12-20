@@ -165,9 +165,12 @@ cython_debug/
 
 # Databases
 .sqlite*
+.db
 
 # Daily data
 daily_stats.json
 
 # vscode
 /.vscode
+/resources
+/backups
