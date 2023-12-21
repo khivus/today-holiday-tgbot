@@ -1,4 +1,4 @@
 from . import (
     chat,
-    holiday,
+    holiday
 )
