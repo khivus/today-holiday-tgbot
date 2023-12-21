@@ -4,7 +4,7 @@ import logging as log
 from sqlmodel import Session, select
 from aiogram import exceptions
 
-from src.constants import engine, bot
+from src.constants import engine, bot, tzinfo
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
 from src.utility.chat_check import is_group_in_db
@@ -14,8 +14,11 @@ from src.routing.main.page_change_action import get_holiday_message
 
 
 async def send_scheluded_holidays_message():
-    hour = datetime.datetime.now().hour
+    
+    tnow = datetime.datetime.now(tz=tzinfo)
+    hour = tnow.hour
     success = 0
+    
     with Session(engine) as session:
         chats = session.exec(select(Chat).where(Chat.mailing_time == hour).where(Chat.mailing_enabled)).all()
         for chat in chats:

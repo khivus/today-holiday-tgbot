@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 from user_agent import generate_user_agent
 
 from src.models.holiday import HolidayType, Holiday
-from src.constants import engine
+from src.constants import engine, tzinfo
 
 async def parse_site(
     url: str = 'https://calend.online/holiday/', 
@@ -50,8 +50,8 @@ async def parse_site(
         
     if add_to_db:
         if not date:
-            today = datetime.date.today()
-            date = [today.day, today.month]
+            tnow = datetime.datetime.now(tz=tzinfo)
+            date = [tnow.day, tnow.month]
         
         with Session(engine) as session:
             results = session.exec(select(Holiday).where(

@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from src.models.chat import Chat
 from src.models.holiday import Holiday, HolidayType
-from src.constants import engine
+from src.constants import engine, tzinfo
 from src.utility.site_parser import parse_site
 
 
@@ -14,8 +14,8 @@ async def build_pages(chat_id: int, date: list[int] = None):
     CHUNK_OVERHEAD = 6
     
     if not date:
-        today = datetime.date.today()
-        date = [today.day, today.month]
+        tnow = datetime.datetime.now(tz=tzinfo)
+        date = [tnow.day, tnow.month]
     
     holidays: dict = {
         'normal': [],
@@ -28,6 +28,7 @@ async def build_pages(chat_id: int, date: list[int] = None):
         results = session.exec(selected)
         
         if results.all() == []: # If site is not parsed somehow
+            log.info('Parsing site from page_builder.')
             await parse_site()
             
         results = session.exec(selected)

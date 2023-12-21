@@ -17,8 +17,11 @@ logging.basicConfig(level=logging.ERROR)
 async def main():
     SQLModel.metadata.create_all(engine)
     
-    with open('daily_stats.json', 'w') as file:
-        json.dump(json_template, file)
+    try:
+        open('daily_stats.json', 'r')
+    except FileNotFoundError:
+        with open('daily_stats.json', 'w') as file:
+            json.dump(json_template, file)
     
     dp.include_router(main_router)
     dp.include_router(admin_router)

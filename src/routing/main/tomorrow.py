@@ -11,7 +11,7 @@ from src.utility.chat_check import is_group_in_db
 from src.utility.json_update import json_update
 from src.utility.page_builder import build_pages
 from src.routers import main_router
-from src.constants import engine
+from src.constants import engine, tzinfo
 from src.routing.main.page_change_action import get_holiday_message
 from src.utility.site_parser import parse_site
         
@@ -19,8 +19,9 @@ from src.utility.site_parser import parse_site
 @main_router.message(Command('tomorrow'))
 async def process_tomorrow(message: types.Message) -> None:
     is_group_in_db(chat_id=message.chat.id)
-    today = datetime.datetime.today()
-    tomorrow = today + datetime.timedelta(days=1)
+    
+    tnow = datetime.datetime.now(tz=tzinfo)
+    tomorrow = tnow + datetime.timedelta(days=1)
     date = [tomorrow.day, tomorrow.month]
     
     with Session(engine) as session:

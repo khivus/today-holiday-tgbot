@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram import types
 from aiogram.filters import Command
 from sqlmodel import Session, select
@@ -5,7 +7,7 @@ from sqlmodel import Session, select
 from src.models.chat import Chat
 from src.models.holiday import Holiday, HolidayType
 from src.routers import admin_router
-from src.constants import VERSION, engine
+from src.constants import VERSION, engine, tzinfo
 
 
 @admin_router.message(Command('stats'))
@@ -18,6 +20,8 @@ async def process_stats(message: types.Message) -> None:
     total_normal = 0
     total_country = 0
     total_church = 0
+    
+    tnow = datetime.datetime.now(tz=tzinfo)
     
     with Session(engine) as session:
         holidays = session.exec(select(Holiday)).all()
@@ -32,7 +36,8 @@ async def process_stats(message: types.Message) -> None:
             elif holiday.type == HolidayType.country_specific: total_country += 1
             elif holiday.type == HolidayType.church: total_church += 1
             
-    message_text = f'Версия бота: <code>{VERSION}</code>\n\n' \
+    message_text = f'Версия бота: <code>{VERSION}</code>\n' \
+        f'Время и дата сейчас: <code>{tnow.day:02}.{tnow.month:02}.{tnow.year} {tnow.hour:02}:{tnow.minute:02}:{tnow.second:02}</code>\n\n' \
         f'Всего чатов: <code>{total_chats}</code>\n' \
         f'Всего использований: <code>{total_uses}</code>\n' \
         f'Всего с рассылкой: <code>{total_with_mailing}</code>\n\n' \

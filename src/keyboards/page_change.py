@@ -3,6 +3,7 @@ import datetime
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
+from src.constants import tzinfo
 
 class PagesCallbackData(CallbackData, prefix='page'):
     current_page_index: int
@@ -15,9 +16,9 @@ def build_pages_keyboard(current_page_index: int, max_page_index: int = 4, date:
         return None
     
     if not date:
-        today = datetime.datetime.today()
-        day = today.day
-        month = today.month
+        tnow = datetime.datetime.now(tz=tzinfo)
+        day = tnow.day
+        month = tnow.month
     else:
         day = date[0]
         month = date[1]
