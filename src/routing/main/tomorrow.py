@@ -28,7 +28,7 @@ async def process_tomorrow(message: types.Message) -> None:
         results = session.exec(selected)
         
         if results.all() == []:
-            await parse_site(url='https://kakoysegodnyaprazdnik.ru/zavtra/', date=date)
+            await parse_site(url='https://calend.online/holiday/tomorrow/', date=date)
                 
         results = session.exec(selected)
         chat = session.exec(select(Chat).where(Chat.id == message.chat.id)).one()

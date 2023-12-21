@@ -34,16 +34,11 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             chat.send_country_specific = not chat.send_country_specific
             msg = get_text(additional_text=f'Национальные праздники теперь <code>{"включены" if chat.send_country_specific else "выключены"}</code>.\n', chat=chat)
 
-        elif callback_data.type == SettingType.SEND_NAME_DAYS:
-            chat.send_name_days = not chat.send_name_days
-            msg = get_text(additional_text=f'Именины теперь <code>{"включены" if chat.send_name_days else "выключены"}</code>.\n', chat=chat)
-
         elif callback_data.type == SettingType.RESET:
             chat.mailing_enabled = False
             chat.mailing_time = 8
             chat.send_church_holidays = True
             chat.send_country_specific = True
-            chat.send_name_days = True
             msg = get_text(additional_text='Все настройки были сброшены до заводских.\n', chat=chat)
         
         else:
