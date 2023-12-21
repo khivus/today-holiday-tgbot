@@ -1,17 +1,15 @@
+import datetime
+
 from aiogram import Dispatcher, Bot
 from sqlmodel import create_engine
 
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.12.1'
+VERSION = 'v1.12.2'
 
 # TODO Поиск праздника
 # TODO Ридмишка
-
-# For start in PowerShell:
-# $env:API_TOKEN = ""
-# python -m src
 
 ADMIN = 897276284 # ADMIN ID
 
@@ -28,3 +26,6 @@ json_template = {
     'succeeded_messages' : 0,
     'all_scheduled_messages' : 0
 }
+
+timezone_offset = +3.0  # GMT+3 MSK Time
+tzinfo = datetime.timezone(datetime.timedelta(hours=timezone_offset))

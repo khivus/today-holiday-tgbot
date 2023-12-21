@@ -6,12 +6,13 @@ from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
 from src.routers import main_router
 from src.utility.chat_check import is_group_in_db
 from src.utility.page_builder import build_pages
+from src.constants import tzinfo
 
 
 def get_holiday_message(page_index: int, pages: list[str], date: list[int] = None):
     if not date:
-        today = datetime.datetime.today()
-        date = [today.day, today.month]
+        tnow = datetime.datetime.now(tz=tzinfo)
+        date = [tnow.day, tnow.month]
     
     max_index = len(pages)
     lbreak: str = '\n'
