@@ -1,5 +1,9 @@
 # Project specific
 resources/
+backups/
+.db
+daily_stats.json
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -163,14 +167,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Databases
-.sqlite*
-.db
-
-# Daily data
-daily_stats.json
-
 # vscode
 /.vscode
-/resources
-/backups
