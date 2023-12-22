@@ -13,10 +13,11 @@ from src.utility.page_builder import build_pages
 from src.routing.main.page_change_action import get_holiday_message
 
 
-async def send_scheluded_holidays_message():
+async def send_scheluded_holidays_message(hour: int = None) -> list:
     
-    tnow = datetime.datetime.now(tz=tzinfo)
-    hour = tnow.hour
+    if hour == None:
+        tnow = datetime.datetime.now(tz=tzinfo)
+        hour = tnow.hour
     success = 0
     
     with Session(engine) as session:
@@ -46,3 +47,5 @@ async def send_scheluded_holidays_message():
     
     json_update('succeeded_messages', success)
     json_update('all_scheduled_messages', len(chats))
+
+    return [success, len(chats)]
