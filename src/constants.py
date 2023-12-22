@@ -6,7 +6,7 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.12.2'
+VERSION = 'v1.13.0'
 
 # TODO Поиск праздника
 # TODO Ридмишка

@@ -1,13 +1,16 @@
-import shutil
 import datetime
 
-from src.constants import tzinfo
+from aiogram import types
+from aiogram.filters import Command
 
-def create_db_backup() -> None:
-    db_path = 'resources/'
-    db_name = 'database.db'
-    backups_path = 'backups/'
-    
+from src.routers import admin_router
+from src.constants import tzinfo, bot, ADMIN
+
+@admin_router.message(Command('create_backup'))
+async def create_db_backup(message: types.Message) -> None:
+    db_file_path = 'resources/database.db'
     tnow = datetime.datetime.now(tz=tzinfo)
+    new_file_name = f'backup_{tnow.day:02}_{tnow.month:02}_{tnow.year}.db'
     
-    shutil.copy2(db_path + db_name, f'{backups_path}backup_{tnow.day:02}_{tnow.month:02}_{tnow.year}.db')
+    file = types.FSInputFile(f'{db_file_path}', f'{new_file_name}')
+    await bot.send_document(chat_id=ADMIN, document=file)
