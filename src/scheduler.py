@@ -11,12 +11,11 @@ from src.constants import tzinfo
 async def scheduler():
     while True:
         tnow = datetime.datetime.now(tz=tzinfo)
-        if tnow.hour == 0 and tnow.minute == 1:
-            await create_db_backup()
-            await process_daily_stats()
-            await parse_site()
-            await asyncio.sleep(60)
-        elif tnow.minute == 2: 
+        if tnow.minute == 1:
+            if tnow.hour == 0:
+                await process_daily_stats()
+                await create_db_backup()
+                await parse_site()
             await send_scheluded_holidays_message()
             await asyncio.sleep(60)
         else:
