@@ -9,7 +9,7 @@ from src.constants import engine, tzinfo
 from src.utility.site_parser import parse_site
 
 
-async def build_pages(chat_id: int, date: list[int] = None):
+async def build_pages(chat_id: int, date: list[int] | None = None):
     CHUNK_SIZE = 13
     CHUNK_OVERHEAD = 6
     

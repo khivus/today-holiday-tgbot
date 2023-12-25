@@ -8,7 +8,7 @@ from src.constants import ADMIN, VERSION, bot, json_template
 
 
 @admin_router.message(Command('dstats'))
-async def process_daily_stats(message: types.Message = None) -> None:
+async def process_daily_stats(message: types.Message | None = None) -> None:
     
     with open('daily_stats.json', 'r') as file:
         daily_data = json.load(file)

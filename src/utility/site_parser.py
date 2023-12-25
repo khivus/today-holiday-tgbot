@@ -13,7 +13,7 @@ from src.constants import engine, tzinfo
 async def parse_site(
     url: str = 'https://calend.online/holiday/', 
     add_to_db: bool = True, 
-    date: list[int] = None
+    date: list[int] | None = None
     ) -> None:
 
     async with aiohttp.ClientSession() as session:
