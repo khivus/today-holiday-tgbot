@@ -13,7 +13,7 @@ from src.utility.page_builder import build_pages
 from src.routing.main.page_change_action import get_holiday_message
 
 
-async def send_scheluded_holidays_message(hour: int = None) -> list:
+async def send_scheluded_holidays_message(hour: int | None = None) -> list:
     
     if hour == None:
         tnow = datetime.datetime.now(tz=tzinfo)

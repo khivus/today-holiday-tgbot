@@ -11,11 +11,17 @@ from src.models.holiday import HolidayType, Holiday
 from src.constants import engine, tzinfo
 
 async def parse_site(
-    url: str = 'https://calend.online/holiday/', 
-    add_to_db: bool = True, 
-    date: list[int] = None
+    url: str | None = None, 
+    date: list[int] | None = None
     ) -> None:
-
+    
+    if not date:
+        tnow = datetime.datetime.now(tz=tzinfo)
+        date = [tnow.day, tnow.month]
+    
+    if not url:
+        url = f'https://calend.online/holiday/day/{date[0]}-{date[1]}/'
+    
     async with aiohttp.ClientSession() as session:
         async with session.get(url=url, headers={'User-Agent': generate_user_agent()}) as response:
             body = await response.text(encoding='utf-8')
@@ -23,6 +29,10 @@ async def parse_site(
     soup = BeautifulSoup(body, 'html.parser')
     site_list = soup.find('ul', class_='holidays-list')
 
+    # for word in church_banwords:
+    #     church_words = word.con('|')
+    # church_pattern = re.compile(rf'.*({church_words}).*',re.IGNORECASE)
+    
     church_pattern = re.compile(
         r'.*(День памяти|Собор|Католический|Буддийский|Зороастрийский|иконы Божией Матери|Пресвятой|Богородицы|Митры|Именины|Мученик).*',
         re.IGNORECASE)
@@ -48,22 +58,17 @@ async def parse_site(
         log.error(f'Site don\'t parsed!')
         return False
         
-    if add_to_db:
-        if not date:
-            tnow = datetime.datetime.now(tz=tzinfo)
-            date = [tnow.day, tnow.month]
+    with Session(engine) as session:
+        results = session.exec(select(Holiday).where(
+            Holiday.day == date[0]).where(Holiday.month == date[1]))
         
-        with Session(engine) as session:
-            results = session.exec(select(Holiday).where(
-                Holiday.day == date[0]).where(Holiday.month == date[1]))
+        for saved_holiday in results:
+            session.delete(saved_holiday)
             
-            for saved_holiday in results:
-                session.delete(saved_holiday)
-                
-            for pending_holiday in holidays_list:
-                holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], day=date[0], month=date[1])
-                session.add(holiday)
-                
-            session.commit()
+        for pending_holiday in holidays_list:
+            holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], day=date[0], month=date[1])
+            session.add(holiday)
+            
+        session.commit()
     
     return True

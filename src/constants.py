@@ -6,8 +6,9 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.13.1'
+VERSION = 'v1.13.3'
 
+# TODO Возможность из админ чата добавлять банворды для церковных праздников
 # TODO Поиск праздника
 # TODO Ридмишка
 
@@ -26,6 +27,10 @@ json_template = {
     'succeeded_messages' : 0,
     'all_scheduled_messages' : 0
 }
+
+# class date:
+#     day: int
+#     month: int
 
 timezone_offset = +3.0  # GMT+3 MSK Time
 tzinfo = datetime.timezone(datetime.timedelta(hours=timezone_offset))

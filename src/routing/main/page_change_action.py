@@ -9,7 +9,7 @@ from src.utility.page_builder import build_pages
 from src.constants import tzinfo
 
 
-def get_holiday_message(page_index: int, pages: list[str], date: list[int] = None):
+def get_holiday_message(page_index: int, pages: list[str], date: list[int] | None = None):
     if not date:
         tnow = datetime.datetime.now(tz=tzinfo)
         date = [tnow.day, tnow.month]

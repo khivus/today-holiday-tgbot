@@ -11,7 +11,7 @@ class PagesCallbackData(CallbackData, prefix='page'):
     month: int
 
 
-def build_pages_keyboard(current_page_index: int, max_page_index: int = 4, date: list[int] = None):
+def build_pages_keyboard(current_page_index: int, max_page_index: int = 4, date: list[int] | None = None):
     if max_page_index == 1:
         return None
     
