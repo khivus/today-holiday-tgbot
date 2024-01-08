@@ -7,7 +7,7 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.14.0'
+VERSION = 'v1.14.1'
 
 # TODO Ридмишка
 

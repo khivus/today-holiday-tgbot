@@ -7,6 +7,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.exceptions import TelegramBadRequest
 from sqlmodel import Session, select
 import sqlmodel
+from src.keyboards.cancel import CancelCallbackData, build_cancel_keyboard
 
 from src.keyboards.days import FindDayCallbackData, build_days_keyboard
 from src.keyboards.months import MonthsCallbackData, build_months_keyboard
@@ -46,11 +47,18 @@ async def process_find_holiday_callback(query: types.CallbackQuery, callback_dat
         
     elif callback_data.find_by == FindType.BY_NAME:
         message_text = 'Введите название праздника (чуствителен к регистру). Поиск производится только по внутренней базе данных.'
-        keyboard = None
+        keyboard = build_cancel_keyboard()
         await state.set_state(FindBy.by_name)
         
     await query.message.edit_text(text=message_text, reply_markup=keyboard)
 
+@main_router.callback_query(CancelCallbackData.filter())
+async def process_choose_month(query: types.CallbackQuery, callback_data: CancelCallbackData, state: FSMContext) -> None:
+    if callback_data.cancel:
+        await state.clear()
+        await process_find_holiday(message=query.message, returned=True)
+        return
+    
 @main_router.message(FindBy.by_name)
 async def process_holiday_name_input(message: types.Message, state: FSMContext) -> None:
     
