@@ -15,10 +15,8 @@ class SettingType(enum.Enum):
     SEND_COUNTRY_SPECIFIC = 'send_country_specific'
     RESET = 'reset'
 
-
 class SettingsCallbackData(CallbackData, prefix='generate'):
     type: SettingType
-
 
 def build_settings_keyboard(chat_id: int):
     builder = InlineKeyboardBuilder()

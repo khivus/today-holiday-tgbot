@@ -7,10 +7,8 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.13.4'
+VERSION = 'v1.14.0'
 
-# TODO Возможность из админ чата добавлять банворды для церковных праздников
-# TODO Поиск праздника
 # TODO Ридмишка
 
 ADMIN = 897276284 # ADMIN ID

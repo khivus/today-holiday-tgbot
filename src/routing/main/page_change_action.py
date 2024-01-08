@@ -27,7 +27,7 @@ def get_holiday_message(page_index: int, pages: list[str], date: Date | None = N
 async def process_change_pages_callback(query: types.CallbackQuery, callback_data: PagesCallbackData):
     is_group_in_db(chat_id=query.message.chat.id)
     
-    date = [callback_data.day, callback_data.month]
+    date = Date(day=callback_data.day, month=callback_data.month)
     pages = await build_pages(chat_id=query.message.chat.id, date=date)
     max_index = len(pages)
     page_index = callback_data.current_page_index

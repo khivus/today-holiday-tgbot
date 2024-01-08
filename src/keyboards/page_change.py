@@ -10,7 +10,6 @@ class PagesCallbackData(CallbackData, prefix='page'):
     day: int
     month: int
 
-
 def build_pages_keyboard(current_page_index: int, max_page_index: int = 4, date: Date | None = None):
     if max_page_index == 1:
         return None

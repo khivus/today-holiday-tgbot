@@ -6,15 +6,19 @@ from aiogram.filters import Command
 from src.routers import admin_router
 
 
-@admin_router.message(Command('add_banword'))
-async def add_church_banword(message: types.Message) -> None:
+@admin_router.message(Command('church_word'))
+async def church_banword(message: types.Message) -> None:
     
     index = message.text.find(' ')
     if index != -1:
         banword = message.text[index+1:]
     
     if index == -1:
-        message_text = 'Чтобы забанить слово вызови команду с нужным словом для бана через пробел.'
+        with open('church_banwords.json', 'r') as file:
+            church_banwords = json.load(file)
+        words = ', '.join(church_banwords['banwords'])
+        message_text = 'Чтобы забанить слово вызови команду с нужным словом для бана через пробел.\n' \
+                        f'Список церковных слов: {words}'
         
     else:
         with open('church_banwords.json', 'r') as file:

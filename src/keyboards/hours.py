@@ -5,7 +5,6 @@ from aiogram.filters.callback_data import CallbackData
 class HourCallbackData(CallbackData, prefix='meow'):
     chosen_hour: int
 
-
 def build_hours_keyboard():
     builder = InlineKeyboardBuilder()
     for i in range(24):
