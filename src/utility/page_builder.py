@@ -5,17 +5,17 @@ from sqlmodel import Session, select
 
 from src.models.chat import Chat
 from src.models.holiday import Holiday, HolidayType
-from src.constants import engine, tzinfo
+from src.constants import engine, tzinfo, Date
 from src.utility.site_parser import parse_site
 
 
-async def build_pages(chat_id: int, date: list[int] | None = None):
+async def build_pages(chat_id: int, date: Date | None = None):
     CHUNK_SIZE = 13
     CHUNK_OVERHEAD = 6
     
     if not date:
         tnow = datetime.datetime.now(tz=tzinfo)
-        date = [tnow.day, tnow.month]
+        date = Date(day=tnow.day, month=tnow.month)
     
     holidays: dict = {
         'normal': [],
@@ -24,12 +24,12 @@ async def build_pages(chat_id: int, date: list[int] | None = None):
     }
     
     with Session(engine) as session:
-        selected = select(Holiday).where(Holiday.day == date[0]).where(Holiday.month == date[1])
+        selected = select(Holiday).where(Holiday.day == date.day).where(Holiday.month == date.month)
         results = session.exec(selected)
         
         if results.all() == []: # If site is not parsed somehow
             log.info('Parsing site from page_builder.')
-            await parse_site()
+            await parse_site(date=date)
             
         results = session.exec(selected)
         chat = session.exec(select(Chat).where(Chat.id == chat_id)).one()

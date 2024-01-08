@@ -1,4 +1,5 @@
 from . import (
+    church_word,
     run_parser,
     stats,
     start_message,
