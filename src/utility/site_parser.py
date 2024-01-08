@@ -1,6 +1,7 @@
 import aiohttp
 import datetime
 import re
+import json
 import logging as log
 
 from bs4 import BeautifulSoup
@@ -8,19 +9,19 @@ from sqlmodel import Session, select
 from user_agent import generate_user_agent
 
 from src.models.holiday import HolidayType, Holiday
-from src.constants import engine, tzinfo
+from src.constants import engine, tzinfo, Date
 
 async def parse_site(
     url: str | None = None, 
-    date: list[int] | None = None
+    date: Date | None = None
     ) -> None:
     
     if not date:
         tnow = datetime.datetime.now(tz=tzinfo)
-        date = [tnow.day, tnow.month]
+        date = Date(day=tnow.day, month=tnow.month)
     
     if not url:
-        url = f'https://calend.online/holiday/day/{date[0]}-{date[1]}/'
+        url = f'https://calend.online/holiday/day/{date.day}-{date.month}/'
     
     async with aiohttp.ClientSession() as session:
         async with session.get(url=url, headers={'User-Agent': generate_user_agent()}) as response:
@@ -29,13 +30,15 @@ async def parse_site(
     soup = BeautifulSoup(body, 'html.parser')
     site_list = soup.find('ul', class_='holidays-list')
 
-    # for word in church_banwords:
-    #     church_words = word.con('|')
-    # church_pattern = re.compile(rf'.*({church_words}).*',re.IGNORECASE)
+    with open('church_banwords.json', 'r') as file:
+        church_banwords = json.load(file)
+
+    church_words = '|'.join(church_banwords['banwords'])
+    church_pattern = re.compile(rf'.*({church_words}).*',re.IGNORECASE)
     
-    church_pattern = re.compile(
-        r'.*(День памяти|Собор|Католический|Буддийский|Зороастрийский|иконы Божией Матери|Пресвятой|Богородицы|Митры|Именины|Мученик).*',
-        re.IGNORECASE)
+    # church_pattern = re.compile(
+    #     r'.*(День памяти|Собор|Католический|Буддийский|Зороастрийский|иконы Божией Матери|Пресвятой|Богородицы|Митры|Именины|Мученик).*',
+    #     re.IGNORECASE)
     country_specific_pattern = r'.*( - ).*'
     holidays_list: list = []
 
@@ -60,13 +63,13 @@ async def parse_site(
         
     with Session(engine) as session:
         results = session.exec(select(Holiday).where(
-            Holiday.day == date[0]).where(Holiday.month == date[1]))
+            Holiday.day == date.day).where(Holiday.month == date.month))
         
         for saved_holiday in results:
             session.delete(saved_holiday)
             
         for pending_holiday in holidays_list:
-            holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], day=date[0], month=date[1])
+            holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], day=date.day, month=date.month)
             session.add(holiday)
             
         session.commit()

@@ -11,7 +11,7 @@ from src.utility.chat_check import is_group_in_db
 from src.utility.json_update import json_update
 from src.utility.page_builder import build_pages
 from src.routers import main_router
-from src.constants import engine, tzinfo
+from src.constants import engine, tzinfo, Date
 from src.routing.main.page_change_action import get_holiday_message
 from src.utility.site_parser import parse_site
         
@@ -22,10 +22,10 @@ async def process_tomorrow(message: types.Message) -> None:
     
     tnow = datetime.datetime.now(tz=tzinfo)
     tomorrow = tnow + datetime.timedelta(days=1)
-    date = [tomorrow.day, tomorrow.month]
+    date = Date(day=tomorrow.day, month=tomorrow.month)
     
     with Session(engine) as session:
-        selected = select(Holiday).where(Holiday.day == date[0]).where(Holiday.month == date[1])
+        selected = select(Holiday).where(Holiday.day == date.day).where(Holiday.month == date.month)
         results = session.exec(selected)
         
         if results.all() == []:

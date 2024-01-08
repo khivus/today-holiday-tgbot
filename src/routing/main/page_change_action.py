@@ -6,17 +6,17 @@ from src.keyboards.page_change import PagesCallbackData, build_pages_keyboard
 from src.routers import main_router
 from src.utility.chat_check import is_group_in_db
 from src.utility.page_builder import build_pages
-from src.constants import tzinfo
+from src.constants import tzinfo, Date
 
 
-def get_holiday_message(page_index: int, pages: list[str], date: list[int] | None = None):
+def get_holiday_message(page_index: int, pages: list[str], date: Date | None = None):
     if not date:
         tnow = datetime.datetime.now(tz=tzinfo)
-        date = [tnow.day, tnow.month]
+        date = Date(day=tnow.day, month=tnow.month)
     
     max_index = len(pages)
     lbreak: str = '\n'
-    msg_start = f'Праздники на {date[0]:02}.{date[1]:02}:\n{lbreak:->50}'
+    msg_start = f'Праздники на {date.day:02}.{date.month:02}:\n{lbreak:->50}'
     msg_end = f'{lbreak:->50}Страница {page_index+1}/{max_index}'
     page = pages[page_index]
     message = msg_start + page + msg_end
