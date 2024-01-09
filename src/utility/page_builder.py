@@ -30,7 +30,8 @@ async def build_pages(chat_id: int, date: Date | None = None):
         if results.all() == []: # If site is not parsed somehow
             log.info('Parsing site from page_builder.')
             await parse_site(date=date)
-            results = session.exec(selected)
+            
+        results = session.exec(selected)
             
         chat = session.exec(select(Chat).where(Chat.id == chat_id)).one()
         
