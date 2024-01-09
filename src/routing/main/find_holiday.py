@@ -1,14 +1,11 @@
-import re
-
 from aiogram import types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.exceptions import TelegramBadRequest
 from sqlmodel import Session, select
-import sqlmodel
-from src.keyboards.cancel import CancelCallbackData, build_cancel_keyboard
 
+from src.keyboards.cancel import CancelCallbackData, build_cancel_keyboard
 from src.keyboards.days import FindDayCallbackData, build_days_keyboard
 from src.keyboards.months import MonthsCallbackData, build_months_keyboard
 from src.keyboards.page_change import build_pages_keyboard
@@ -19,6 +16,7 @@ from src.routers import main_router
 from src.routing.main.page_change_action import get_holiday_message
 from src.utility.chat_check import is_group_in_db
 from src.utility.page_builder import build_pages
+from src.utility.site_parser import parse_site
 
 
 class FindBy(StatesGroup):
@@ -27,8 +25,7 @@ class FindBy(StatesGroup):
 @main_router.message(Command("find_holiday"))
 async def process_find_holiday(message: types.Message, returned: bool | None = None) -> None:
     is_group_in_db(chat_id=message.chat.id)
-    message_text = 'Чтобы найти праздник по дате нажмите кнопку "Найти по дате".\n' \
-                    'Чтобы найти праздник по названию нажмите кнопку "Найти по названию".'
+    message_text = 'Выберите каким способом хотите найти праздник:'
     keyboard = build_find_holiday_keyboard()
     
     try:
@@ -99,6 +96,7 @@ async def process_choose_day(query: types.CallbackQuery, callback_data: FindDayC
         return
     
     date = Date(day=callback_data.chosen_day, month=callback_data.chosen_month)
+    await parse_site(date=date)
     pages = await build_pages(chat_id=query.message.chat.id, date=date)
     message_text = get_holiday_message(page_index=0, pages=pages, date=date)
     keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages), date=date)

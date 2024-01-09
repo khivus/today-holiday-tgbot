@@ -30,15 +30,15 @@ async def parse_site(
     soup = BeautifulSoup(body, 'html.parser')
     site_list = soup.find('ul', class_='holidays-list')
 
+    if not site_list:
+        log.error(f'Site don\'t parsed!')
+        return False
+    
     with open('church_banwords.json', 'r') as file:
         church_banwords = json.load(file)
 
     church_words = '|'.join(church_banwords['banwords'])
     church_pattern = re.compile(rf'.*({church_words}).*',re.IGNORECASE)
-    
-    # church_pattern = re.compile(
-    #     r'.*(День памяти|Собор|Католический|Буддийский|Зороастрийский|иконы Божией Матери|Пресвятой|Богородицы|Митры|Именины|Мученик).*',
-    #     re.IGNORECASE)
     country_specific_pattern = r'.*( - ).*'
     holidays_list: list = []
 

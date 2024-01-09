@@ -18,7 +18,7 @@ def build_days_keyboard(chosen_month: int):
     builder = InlineKeyboardBuilder()
     for i in range(1, days + 1):
         builder.button(text=f'{i}', callback_data=FindDayCallbackData(chosen_day=i, chosen_month=chosen_month))
-    builder.button(text='↩️ Вернуться к выбору', callback_data=FindDayCallbackData(chosen_day=-1, chosen_month=chosen_month))
+    builder.button(text='↩️ Вернуться назад', callback_data=FindDayCallbackData(chosen_day=-1, chosen_month=chosen_month))
 
     builder.adjust(8, 8, 8, days-24, 1)
 

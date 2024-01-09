@@ -11,7 +11,7 @@ def build_months_keyboard():
     
     for i in range(1, 13):
         builder.button(text=f'{i}', callback_data=MonthsCallbackData(chosen_month=i))
-    builder.button(text='↩️ Вернуться к выбору', callback_data=MonthsCallbackData(chosen_month=-1))
+    builder.button(text='↩️ Вернуться назад', callback_data=MonthsCallbackData(chosen_month=-1))
 
     builder.adjust(6, 6, 1)
 
