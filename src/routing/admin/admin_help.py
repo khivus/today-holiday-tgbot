@@ -11,6 +11,7 @@ async def process_send_skipped_messages(message: types.Message) -> None:
                 '/stats\n' \
                 '/dstats\n' \
                 '/run_parser\n' \
-                '/create_backup'
+                '/create_backup\n' \
+                '/church_word\n'
     
     await message.answer(text=message_text)

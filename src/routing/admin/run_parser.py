@@ -1,15 +1,24 @@
 from aiogram import types
 from aiogram.filters import Command
 
+from src.constants import Date
 from src.routers import admin_router
 from src.utility.site_parser import parse_site
 
 
 @admin_router.message(Command('run_parser'))
 async def process_parser(message: types.Message) -> None:
-    if await parse_site():
-        message_text = 'Сайт пропаршен и добавлен в БД.'
+    
+    date = None
+    index = message.text.find(' ')
+    if index != -1:
+        str_date = message.text[index+1:]
+        raw_date = str_date.split('.')
+        date = Date(day=int(raw_date[0]), month=int(raw_date[1]))
+    
+    if await parse_site(date=date):
+        message_text = f'Сайт пропаршен в дату: <code>{date.day}.{date.month}</code> и добавлен в бд.'
     else:
-        message_text = 'Сайт не удалось пропарсить или праздники уже есть в базе данных.'
+        message_text = 'Сайт не удалось пропарсить.'
 
     await message.answer(text=message_text)
