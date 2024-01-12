@@ -34,12 +34,13 @@ async def parse_site(
         log.error(f'Site don\'t parsed!')
         return False
     
-    with open('church_banwords.json', 'r') as file:
-        church_banwords = json.load(file)
+    with open('filter_words.json', 'r') as file:
+        filter_words = json.load(file)
 
-    church_words = '|'.join(church_banwords['banwords'])
+    church_words = '|'.join(filter_words['church'])
     church_pattern = re.compile(rf'.*({church_words}).*',re.IGNORECASE)
-    country_specific_pattern = r'.*( - ).*'
+    country_words = '|'.join(filter_words['international'])
+    country_specific_pattern = re.compile(rf'.*({country_words}).*',re.IGNORECASE)
     holidays_list: list = []
 
     for element in site_list:

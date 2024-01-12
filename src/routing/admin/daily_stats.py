@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.filters import Command
 
 from src.routers import admin_router
-from src.constants import ADMIN, VERSION, bot, daily_json_template
+from src.constants import ADMIN, VERSION, bot, daily_json
 
 
 @admin_router.message(Command('dstats'))
@@ -21,6 +21,6 @@ async def process_daily_stats(message: types.Message | None = None) -> None:
     
     if not message:
         with open('daily_stats.json', 'w') as file:
-            json.dump(daily_json_template, file)
+            json.dump(daily_json, file)
     
     await bot.send_message(chat_id=ADMIN, text=message_text)
