@@ -6,5 +6,6 @@ from . import (
     page_change_action,
     about,
     tomorrow,
-    find_holiday
+    find_holiday,
+    help
 )

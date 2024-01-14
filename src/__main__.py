@@ -4,7 +4,7 @@ import json
 
 from sqlmodel import SQLModel
 
-from src.constants import dp, bot, engine, daily_json_template, church_banword
+from src.constants import dp, bot, engine, daily_json, filter_words
 from src.routers import main_router, admin_router
 from src.models import __init__
 from src.routing.admin.start_message import send_successful_start_message
@@ -18,16 +18,16 @@ async def main():
     SQLModel.metadata.create_all(engine)
     
     try:
-        open('church_banwords.json', 'r')
+        open('filter_words.json', 'r')
     except FileNotFoundError:
-        with open('church_banwords.json', 'w') as file:
-            json.dump(church_banword, file)
+        with open('filter_words.json', 'w') as file:
+            json.dump(filter_words, file)
     
     try:
         open('daily_stats.json', 'r')
     except FileNotFoundError:
         with open('daily_stats.json', 'w') as file:
-            json.dump(daily_json_template, file)
+            json.dump(daily_json, file)
     
     dp.include_router(main_router)
     dp.include_router(admin_router)

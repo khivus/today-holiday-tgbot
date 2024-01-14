@@ -7,7 +7,7 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.14.3'
+VERSION = 'v1.14.5'
 
 # TODO Ридмишка
 
@@ -20,15 +20,16 @@ dp = Dispatcher()
 db_path = "resources/database.db"
 engine = create_engine("sqlite:///" + db_path)
 
-daily_json_template = {
+daily_json = {
     'new_chats' : 0,
     'uses' : 0,
     'succeeded_messages' : 0,
     'all_scheduled_messages' : 0
 }
 
-church_banword = {
-    'banwords' : []
+filter_words = {
+    'church' : [],
+    'international' : []
 }
 
 @dataclass

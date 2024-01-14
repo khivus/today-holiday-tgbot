@@ -1,5 +1,5 @@
 from . import (
-    church_word,
+    filter_word,
     run_parser,
     stats,
     start_message,

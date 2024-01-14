@@ -28,7 +28,7 @@ async def process_tomorrow(message: types.Message) -> None:
         selected = select(Holiday).where(Holiday.day == date.day).where(Holiday.month == date.month)
         results = session.exec(selected)
         
-        if results.all() == []:
+        if not results.all():
             await parse_site(url='https://calend.online/holiday/tomorrow/', date=date)
                 
         results = session.exec(selected)

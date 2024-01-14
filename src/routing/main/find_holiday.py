@@ -66,7 +66,7 @@ async def process_holiday_name_input(message: types.Message, state: FSMContext) 
         
         results = session.exec(select(Holiday).where(Holiday.name.ilike(f'%{message.text}%'))).all()
         
-        if results == []:
+        if not results:
             message_text = f'Праздников с таким названием нет.'
         else:
             for holiday in results:

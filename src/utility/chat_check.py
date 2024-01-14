@@ -6,7 +6,7 @@ from src.constants import engine
 from src.routers import main_router
 
 
-def is_group_in_db(chat_id: int, migrate_from_chat_id: int | None = None) -> None:
+def is_group_in_db(chat_id: int, migrate_from_chat_id: int | None = None) -> bool | None:
     with Session(engine) as session:
         if not session.exec(select(Chat).where(Chat.id == chat_id)).all():
             if session.exec(select(Chat).where(Chat.id == migrate_from_chat_id)).all():
