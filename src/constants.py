@@ -7,10 +7,8 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.14.4'
+VERSION = 'v1.14.5'
 
-# TODO Обновление праздников на добавлении слова или удалении или по команде
-# TODO Удаление фильтр слова
 # TODO Ридмишка
 
 ADMIN = 897276284 # ADMIN ID

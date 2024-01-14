@@ -27,7 +27,7 @@ async def build_pages(chat_id: int, date: Date | None = None):
         selected = select(Holiday).where(Holiday.day == date.day).where(Holiday.month == date.month)
         results = session.exec(selected)
         
-        if results.all() == []: # If site is not parsed somehow
+        if not results.all(): # If site is not parsed somehow
             log.info('Parsing site from page_builder.')
             await parse_site(date=date)
             
