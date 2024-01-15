@@ -9,8 +9,6 @@ from src.config import Config
 # TODO Don't forget to change version!
 VERSION = 'v1.14.6'
 
-# TODO Ридмишка
-
 ADMIN = 897276284 # ADMIN ID
 
 config = Config()
