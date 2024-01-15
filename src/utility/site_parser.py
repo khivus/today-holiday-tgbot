@@ -40,7 +40,7 @@ async def parse_site(
     church_words = '|'.join(filter_words['church'])
     church_pattern = re.compile(rf'.*({church_words}).*',re.IGNORECASE)
     country_words = '|'.join(filter_words['international'])
-    country_specific_pattern = re.compile(rf'.*({country_words}).*',re.IGNORECASE)
+    country_specific_pattern = re.compile(rf'.*({country_words}).*')
     holidays_list: list = []
 
     for element in site_list:
@@ -49,10 +49,10 @@ async def parse_site(
         if holiday_name == '':
             continue
         
-        if re.match(country_specific_pattern, holiday_name):
-            holiday_type = HolidayType.country_specific
-        elif re.match(church_pattern, holiday_name):
+        if re.match(church_pattern, holiday_name):
             holiday_type = HolidayType.church
+        elif re.match(country_specific_pattern, holiday_name):
+            holiday_type = HolidayType.country_specific
         else:
             holiday_type = HolidayType.normal
         
