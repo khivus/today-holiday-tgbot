@@ -1,5 +1,5 @@
 from . import (
-    filter_word,
+    filter,
     run_parser,
     stats,
     start_message,
