@@ -1,5 +1,7 @@
 # Telegram Holiday Bot
 
+[![CodeFactor](https://www.codefactor.io/repository/github/khivus/today-holiday-tgbot/badge/main)](https://www.codefactor.io/repository/github/khivus/today-holiday-tgbot/overview/main)
+
 A Telegram bot built using aiogram==3.0.0b7 and other modules listed in the `requirements.txt` file. The bot sends a daily list of today's holidays at specified hours and includes various other cool features.
 You can use last version of bot [there](https://t.me/Kakoy_Prazdnik_bot).
 
