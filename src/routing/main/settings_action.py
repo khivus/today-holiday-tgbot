@@ -56,8 +56,6 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
         pass
 
 
-
-
 @main_router.callback_query(HourCallbackData.filter())
 async def process_hours_callback(query: types.CallbackQuery, callback_data: HourCallbackData):
     is_group_in_db(chat_id=query.message.chat.id)
@@ -84,5 +82,3 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
         await query.message.edit_text(text=msg, reply_markup=reply_markup)
     except:
         pass
-
-

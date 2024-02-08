@@ -7,9 +7,12 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.14.6'
+VERSION = 'v1.14.7'
 
-# TODO Ридмишка
+# TODO Change site from calend.online to kakoyprazdnik.com
+# TODO Migrate db
+# TODO Add to db all holidays from new site
+# TODO Clear all holiday types dependencies
 
 ADMIN = 897276284 # ADMIN ID
 

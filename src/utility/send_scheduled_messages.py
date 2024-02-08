@@ -36,11 +36,11 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
                 session.delete(chat)
                 print(f'Chat {chat.id} is deleted')
             except exceptions.TelegramMigrateToChat as e:
-                log.error(f'{e.method}~{e.message}')
+                log.error(f'{e.method}: {e.message}')
                 if is_group_in_db(chat_id=e.migrate_to_chat_id, migrate_from_chat_id=chat.id) == None:
                     await bot.send_message(chat_id=e.migrate_to_chat_id, text=message_text, reply_markup=keyboard)
             except exceptions.TelegramAPIError as e:
-                log.error(f'{e.method}~{e.message}')
+                log.error(f'{e.method}: {e.message}')
                 continue
             
             session.commit()

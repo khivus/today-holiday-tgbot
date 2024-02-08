@@ -18,4 +18,4 @@ async def process_about(message: types.Message) -> None:
     try:
         await message.answer(text=message_text, disable_web_page_preview=True)
     except:
-        print('funny')
+        pass
