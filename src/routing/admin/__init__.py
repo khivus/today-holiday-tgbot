@@ -1,5 +1,4 @@
 from . import (
-    filter,
     run_parser,
     stats,
     start_message,

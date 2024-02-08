@@ -10,7 +10,7 @@ from src.utility.page_builder import build_pages
 from src.routers import main_router
 from src.constants import engine
 from src.routing.main.page_change_action import get_holiday_message
-        
+
 
 @main_router.message(Command('holidays'))
 async def process_holidays(message: types.Message) -> None:
@@ -19,7 +19,7 @@ async def process_holidays(message: types.Message) -> None:
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(Chat.id == message.chat.id)).one()
 
-        pages = await build_pages(chat_id=message.chat.id)
+        pages = await build_pages()
         message_text = get_holiday_message(page_index=0, pages=pages)
         keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
 

@@ -28,7 +28,7 @@ async def process_change_pages_callback(query: types.CallbackQuery, callback_dat
     is_group_in_db(chat_id=query.message.chat.id)
     
     date = Date(day=callback_data.day, month=callback_data.month)
-    pages = await build_pages(chat_id=query.message.chat.id, date=date)
+    pages = await build_pages(date=date)
     max_index = len(pages)
     page_index = callback_data.current_page_index
     new_page_index = min(max(page_index, 0), max_index-1)

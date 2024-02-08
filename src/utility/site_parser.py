@@ -8,7 +8,8 @@ from bs4 import BeautifulSoup
 from sqlmodel import Session, select
 from user_agent import generate_user_agent
 
-from src.models.holiday import HolidayType, Holiday
+from src.models.holiday import Holiday
+# from src.models.holiday import HolidayType, Holiday
 from src.constants import engine, tzinfo, Date
 
 async def parse_site(
@@ -49,14 +50,15 @@ async def parse_site(
         if holiday_name == '':
             continue
         
-        if re.match(church_pattern, holiday_name):
-            holiday_type = HolidayType.church
-        elif re.match(country_specific_pattern, holiday_name):
-            holiday_type = HolidayType.country_specific
-        else:
-            holiday_type = HolidayType.normal
-        
-        holidays_list.append([holiday_name, holiday_type])
+        # if re.match(church_pattern, holiday_name):
+        #     holiday_type = HolidayType.church
+        # elif re.match(country_specific_pattern, holiday_name):
+        #     holiday_type = HolidayType.country_specific
+        # else:
+        #     holiday_type = HolidayType.normal
+        # 
+        # holidays_list.append([holiday_name, holiday_type])
+        holidays_list.append([holiday_name])
 
     if len(holidays_list) == 0:
         log.error(f'Site don\'t parsed!')
@@ -70,7 +72,8 @@ async def parse_site(
             session.delete(saved_holiday)
             
         for pending_holiday in holidays_list:
-            holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], day=date.day, month=date.month)
+            # holiday = Holiday(name=pending_holiday[0], type=pending_holiday[1], day=date.day, month=date.month)
+            holiday = Holiday(name=pending_holiday[0], day=date.day, month=date.month)
             session.add(holiday)
             
         session.commit()

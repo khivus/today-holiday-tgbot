@@ -15,4 +15,4 @@ async def process_start(message: types.Message) -> None:
         await process_about(message=message)
         
     else:
-        await process_holidays(message)
+        await process_holidays(message=message)

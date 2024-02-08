@@ -3,5 +3,6 @@ from . import (
     send_scheduled_messages,
     site_parser,
     chat_check,
-    json_update
+    json_update,
+    new_site_parser
 )

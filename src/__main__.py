@@ -4,7 +4,7 @@ import json
 
 from sqlmodel import SQLModel
 
-from src.constants import dp, bot, engine, daily_json, filter_words
+from src.constants import EventFilter, dp, bot, engine, daily_json
 from src.routers import main_router, admin_router
 from src.models import __init__
 from src.routing.admin.start_message import send_successful_start_message
@@ -12,16 +12,12 @@ from src.scheduler import scheduler
 
 
 logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger()
+logger.addFilter(EventFilter('Failed to fetch updates'))
 
 
 async def main():
     SQLModel.metadata.create_all(engine)
-    
-    try:
-        open('filter_words.json', 'r')
-    except FileNotFoundError:
-        with open('filter_words.json', 'w') as file:
-            json.dump(filter_words, file)
     
     try:
         open('daily_stats.json', 'r')

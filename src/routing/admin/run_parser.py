@@ -5,7 +5,7 @@ from aiogram.filters import Command
 
 from src.constants import Date, tzinfo
 from src.routers import admin_router
-from src.utility.site_parser import parse_site
+from src.utility.new_site_parser import parse_site_page
 
 
 @admin_router.message(Command('run_parser'))
@@ -20,7 +20,7 @@ async def process_parser(message: types.Message) -> None:
         tnow = datetime.datetime.now(tz=tzinfo)
         date = Date(day=tnow.day, month=tnow.month)
     
-    if await parse_site(date=date):
+    if await parse_site_page(date=date):
         message_text = f'Сайт пропаршен в дату: <code>{date.day}.{date.month}</code> и добавлен в бд.'
     else:
         message_text = 'Сайт не удалось пропарсить.'
