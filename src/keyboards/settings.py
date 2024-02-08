@@ -11,8 +11,8 @@ from src.models.chat import Chat
 class SettingType(enum.Enum):
     MAILING_ENABLED = 'mailing_enabled'
     MAILING_TIME = 'mailing_time'
-    SEND_CHURCH_HOLIDAYS = 'send_church_holidays'
-    SEND_COUNTRY_SPECIFIC = 'send_country_specific'
+    # SEND_CHURCH_HOLIDAYS = 'send_church_holidays'
+    # SEND_COUNTRY_SPECIFIC = 'send_country_specific'
     RESET = 'reset'
 
 class SettingsCallbackData(CallbackData, prefix='generate'):
@@ -27,13 +27,13 @@ def build_settings_keyboard(chat_id: int):
             type=SettingType.MAILING_ENABLED))
         builder.button(text='⏰ Время рассылки', callback_data=SettingsCallbackData(
             type=SettingType.MAILING_TIME))
-        builder.button(text=f'{"✅" if chat.send_church_holidays else "❌"} Церковные', callback_data=SettingsCallbackData(
-            type=SettingType.SEND_CHURCH_HOLIDAYS))
-        builder.button(text=f'{"✅" if chat.send_country_specific else "❌"} Национальные', callback_data=SettingsCallbackData(
-            type=SettingType.SEND_COUNTRY_SPECIFIC))
+        # builder.button(text=f'{"✅" if chat.send_church_holidays else "❌"} Церковные', callback_data=SettingsCallbackData(
+        #     type=SettingType.SEND_CHURCH_HOLIDAYS))
+        # builder.button(text=f'{"✅" if chat.send_country_specific else "❌"} Национальные', callback_data=SettingsCallbackData(
+        #     type=SettingType.SEND_COUNTRY_SPECIFIC))
         builder.button(text='🔄 Сбросить настройки до заводских', callback_data=SettingsCallbackData(
             type=SettingType.RESET))
 
-    builder.adjust(1, 1, 2, 1)
+    builder.adjust(1, 1, 1)
 
     return builder.as_markup()

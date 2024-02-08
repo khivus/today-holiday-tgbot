@@ -11,7 +11,7 @@ async def process_send_skipped_messages(message: types.Message) -> None:
                 '/stats\n' \
                 '/dstats\n' \
                 '/run_parser {date(optional)}\n' \
-                '/create_backup\n' \
-                '/filter {holiday_type} {filter_word}, {filter_word}...\n'
+                '/create_backup\n'
+                # '/filter {holiday_type} {filter_word}, {filter_word}...\n'
     
     await message.answer(text=message_text)

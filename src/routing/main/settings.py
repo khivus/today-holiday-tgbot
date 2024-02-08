@@ -14,10 +14,10 @@ def get_text(chat: Chat, additional_text: str = '') -> str:
         '<b>Ваши настройки</b>\n' \
         f'- Рассылка включена: <code>{"Да" if chat.mailing_enabled else "Нет"}</code>\n' \
         f'- Время рассылки: <code>{chat.mailing_time}:00</code>\n' \
-        f'- Отправлять церковные праздники: <code>{"Да" if chat.send_church_holidays else "Нет"}</code>\n' \
-        f'- Отправлять национальные праздники: <code>{"Да" if chat.send_country_specific else "Нет"}</code>\n' \
         '\n' \
         'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
+        # f'- Отправлять церковные праздники: <code>{"Да" if chat.send_church_holidays else "Нет"}</code>\n' \
+        # f'- Отправлять национальные праздники: <code>{"Да" if chat.send_country_specific else "Нет"}</code>\n' \
 
     return text
 

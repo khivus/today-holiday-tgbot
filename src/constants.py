@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from dataclasses import dataclass
 from aiogram import Dispatcher, Bot
@@ -7,12 +8,9 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.14.7'
+VERSION = 'v1.15.0'
 
-# TODO Change site from calend.online to kakoyprazdnik.com
-# TODO Migrate db
-# TODO Add to db all holidays from new site
-# TODO Clear all holiday types dependencies
+# Comment all code :D
 
 ADMIN = 897276284 # ADMIN ID
 
@@ -30,15 +28,23 @@ daily_json = {
     'all_scheduled_messages' : 0
 }
 
-filter_words = {
-    'church' : [],
-    'international' : []
-}
+# filter_words = {
+#     'church' : [],
+#     'international' : []
+# }
 
 @dataclass
 class Date():
     day: int
     month: int
+
+class EventFilter(logging.Filter):
+    def __init__(self, event_name):
+        super().__init__()
+        self.event_name = event_name
+
+    def filter(self, record):
+        return self.event_name in record.getMessage()
 
 timezone_offset = +3.0  # GMT+3 MSK Time
 tzinfo = datetime.timezone(datetime.timedelta(hours=timezone_offset))

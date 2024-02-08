@@ -23,7 +23,7 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
     with Session(engine) as session:
         chats = session.exec(select(Chat).where(Chat.mailing_time == hour).where(Chat.mailing_enabled)).all()
         for chat in chats:
-            pages = await build_pages(chat_id=chat.id)
+            pages = await build_pages()
             message_text = get_holiday_message(page_index=0, pages=pages)
             keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
             
