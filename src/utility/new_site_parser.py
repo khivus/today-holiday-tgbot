@@ -43,7 +43,7 @@ async def parse_all_site_pages(start_month: int = 1) -> None:
                 log.info(f'Done {date.day}.{date.month}')
             else:
                 log.error(f'Error parsing {date.day}.{date.month}')
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
 
             # with open('logs.txt', 'a', encoding='utf-8') as file:
             #     to_file = f'\ndone {month} {day} \n {holidays[len(holidays)-1]}\n'
@@ -89,9 +89,13 @@ async def parse_site_page(date: Date | None = None) -> bool:
     month = get_month_name(month=date.month)
     url = f'https://kakoyprazdnik.com/den/{date.day}-{month}'
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=url, headers={'User-Agent': generate_user_agent()}) as response:
-            body = await response.text(encoding='utf-8')
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=url, headers={'User-Agent': generate_user_agent()}) as response:
+                body = await response.text(encoding='utf-8')
+    except aiohttp.ClientConnectionError:
+        log.error('Cannot connect to host kakoyprazdnik.com:443 ssl:default [Connect call failed (\'89.184.89.203\', 443)]')
+        return False
 
     soup = BeautifulSoup(body, 'html.parser')
     mainzona = soup.find('div', id='mainzona')
