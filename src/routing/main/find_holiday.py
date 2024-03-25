@@ -1,3 +1,5 @@
+import re
+
 from aiogram import types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -60,23 +62,35 @@ async def process_choose_month(query: types.CallbackQuery, callback_data: Cancel
 async def process_holiday_name_input(message: types.Message, state: FSMContext) -> None:
     
     await state.clear()
-    message_text = 'Праздники с таким именем:\n'
-    
+    message_text: list = ['Праздники с таким именем:\n']
+    find_pattern = re.compile(rf'.*({message.text}).*', re.IGNORECASE)
+    index = 0
+    at_least_one_found = False
+
     with Session(engine) as session:
         
-        results = session.exec(select(Holiday).where(Holiday.name.ilike(f'%{message.text}%'))).all()
+        results = session.exec(select(Holiday))
+
+        for holiday in results:
+            if re.match(find_pattern, holiday.name):
+                at_least_one_found = True
+                if len(message_text[index]) < 4000:
+                    message_text[index] += f'{holiday.day:02}.{holiday.month:02} ● {holiday.name}\n'
+                else:
+                    index += 1
+                    message_text.append(f'{holiday.day:02}.{holiday.month:02} ● {holiday.name}\n')
         
-        if not results:
-            message_text = f'Праздников с таким названием нет.'
-        else:
-            for holiday in results:
-                message_text += f'{holiday.name} | {holiday.day:02}.{holiday.month:02}\n'
+    if not at_least_one_found:
+        message_text: list = ['Праздников с таким именем нет.']
+    elif index > 9:
+        message_text: list = ['Пожалуйста, введите более точное название.']
     
     try:
-        await message.answer(text=message_text)
-    except TelegramBadRequest:
-        await message.answer(text='Слишком много праздников с таким названием. Пожалуйста, введите более точное название.')
-    
+        for msgtext in message_text:
+            await message.answer(text=msgtext)
+    except:
+        pass
+
 @main_router.callback_query(MonthsCallbackData.filter())
 async def process_choose_month(query: types.CallbackQuery, callback_data: MonthsCallbackData) -> None:
     

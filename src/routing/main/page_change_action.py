@@ -10,14 +10,26 @@ from src.constants import tzinfo, Date
 
 
 def get_holiday_message(page_index: int, pages: list[str], date: Date | None = None):
+    
+    tnow = datetime.datetime.now(tz=tzinfo)
+
     if not date:
-        tnow = datetime.datetime.now(tz=tzinfo)
         date = Date(day=tnow.day, month=tnow.month)
     
+    weekdays: dict = {
+        0 : 'понедельник',
+        1 : 'вторник',
+        2 : 'среда',
+        3 : 'четверг',
+        4 : 'пятница',
+        5 : 'суббота',
+        6 : 'воскресенье'
+    }
+
     max_index = len(pages)
     lbreak: str = '\n'
-    msg_start = f'Праздники на {date.day:02}.{date.month:02}:\n{lbreak:->50}'
-    msg_end = f'{lbreak:->50}Страница {page_index+1}/{max_index}'
+    msg_start = f'Праздники на {weekdays[tnow.weekday()]} {date.day:02}.{date.month:02}:\n{lbreak:->50}'
+    msg_end = f'{lbreak:->50}Страница {page_index + 1}/{max_index}'
     page = pages[page_index]
     message = msg_start + page + msg_end
     return message
