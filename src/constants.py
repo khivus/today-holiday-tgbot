@@ -8,9 +8,10 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.15.1'
+VERSION = 'v1.15.2'
 
-# TODO Add comments to code :D
+# TODO Add comments to code D:
+# TODO Add inline query commands /today, /tomorrow, /find
 
 ADMIN = 897276284 # ADMIN ID
 
@@ -27,11 +28,6 @@ daily_json = {
     'succeeded_messages' : 0,
     'all_scheduled_messages' : 0
 }
-
-# filter_words = {
-#     'church' : [],
-#     'international' : []
-# }
 
 @dataclass
 class Date():

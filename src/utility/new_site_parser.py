@@ -12,21 +12,21 @@ from src.constants import engine, tzinfo, Date
 
 
 def get_month_name(month: int) -> str:
-    months: list = [
-        'yanvarya',
-        'fevralya',
-        'marta',
-        'aprelya',
-        'maya',
-        'ijunya',
-        'ijulya',
-        'avgusta',
-        'sentyabrya',
-        'oktyabrya',
-        'noyabrya',
-        'dekabrya'
-    ]
-    return months[month-1]
+    months: dict = {
+        1 : 'yanvarya',
+        2 : 'fevralya',
+        3 : 'marta',
+        4 : 'aprelya',
+        5 : 'maya',
+        6 : 'ijunya',
+        7 : 'ijulya',
+        8 : 'avgusta',
+        9 : 'sentyabrya',
+        10 : 'oktyabrya',
+        11 : 'noyabrya',
+        12 : 'dekabrya'
+    }
+    return months[month]
 
 
 async def parse_all_site_pages(start_month: int = 1) -> None:
@@ -44,29 +44,6 @@ async def parse_all_site_pages(start_month: int = 1) -> None:
             else:
                 log.error(f'Error parsing {date.day}.{date.month}')
             await asyncio.sleep(3)
-
-            # with open('logs.txt', 'a', encoding='utf-8') as file:
-            #     to_file = f'\ndone {month} {day} \n {holidays[len(holidays)-1]}\n'
-            #     file.write(to_file)
-
-    # just_names: list = []
-    # tag_list: list = []
-    # for day in holidays:
-    #     for holiday in day:
-    #         name = holiday[0]
-    #         just_names.append(name)
-    #         tags = holiday[1]
-    #         for tag in tags:
-    #             if tag not in tag_list:
-    #                 tag_list.append(tag)
-
-    # with open('holidays.txt', 'w', encoding='utf-8') as file:
-    #     country_str = '\n'.join(just_names)
-    #     file.write(country_str)
-    # with open('tags.txt', 'w', encoding='utf-8') as file:
-    #     tagss = '\n'.join(tag_list)
-    #     file.write(tagss)
-    # print('done')
 
 
 def filter_holiday(tags: list) -> bool:
