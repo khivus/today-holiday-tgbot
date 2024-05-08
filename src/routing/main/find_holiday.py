@@ -4,7 +4,6 @@ from aiogram import types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.exceptions import TelegramBadRequest
 from sqlmodel import Session, select
 
 from src.keyboards.cancel import CancelCallbackData, build_cancel_keyboard
@@ -15,10 +14,9 @@ from src.models.holiday import Holiday
 from src.constants import Date, engine
 from src.keyboards.find_holiday import FindHolidayCallbackData, FindType, build_find_holiday_keyboard
 from src.routers import main_router
-from src.routing.main.page_change_action import get_holiday_message
 from src.utility.chat_check import is_group_in_db
 from src.utility.new_site_parser import parse_site_page
-from src.utility.page_builder import build_pages
+from src.utility.page_builder import build_pages, get_holiday_message
 
 
 class FindBy(StatesGroup):

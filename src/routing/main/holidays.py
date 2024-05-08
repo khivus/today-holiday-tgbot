@@ -6,10 +6,9 @@ from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
 from src.utility.chat_check import is_group_in_db
 from src.utility.json_update import json_update
-from src.utility.page_builder import build_pages
+from src.utility.page_builder import build_pages, get_holiday_message
 from src.routers import main_router
 from src.constants import engine
-from src.routing.main.page_change_action import get_holiday_message
 
 
 @main_router.message(Command('holidays'))
