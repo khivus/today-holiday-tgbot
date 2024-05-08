@@ -7,5 +7,6 @@ from . import (
     about,
     tomorrow,
     find_holiday,
-    help
+    help,
+    any_handler
 )
