@@ -43,7 +43,7 @@ async def process_find_holiday_callback(query: types.CallbackQuery, callback_dat
         keyboard = build_months_keyboard()
         
     elif callback_data.find_by == FindType.BY_NAME:
-        message_text = 'Введите название праздника (чуствителен к регистру). Поиск производится только по внутренней базе данных.'
+        message_text = 'Введите название праздника.'
         keyboard = build_cancel_keyboard()
         await state.set_state(FindBy.by_name)
         
@@ -60,9 +60,8 @@ async def process_choose_month(query: types.CallbackQuery, callback_data: Cancel
 async def process_holiday_name_input(message: types.Message, state: FSMContext) -> None:
     
     await state.clear()
-    message_text: list = ['Праздники с таким именем:\n']
+    holidays: list = []
     find_pattern = re.compile(rf'.*({message.text}).*', re.IGNORECASE)
-    index = 0
     at_least_one_found = False
 
     with Session(engine) as session:
@@ -72,20 +71,17 @@ async def process_holiday_name_input(message: types.Message, state: FSMContext) 
         for holiday in results:
             if re.match(find_pattern, holiday.name):
                 at_least_one_found = True
-                if len(message_text[index]) < 4000:
-                    message_text[index] += f'{holiday.day:02}.{holiday.month:02} ● {holiday.name}\n'
-                else:
-                    index += 1
-                    message_text.append(f'{holiday.day:02}.{holiday.month:02} ● {holiday.name}\n')
-        
-    if not at_least_one_found:
-        message_text: list = ['Праздников с таким именем нет.']
-    elif index > 9:
-        message_text: list = ['Пожалуйста, введите более точное название.']
+                holidays.append(f'{holiday.day:02}.{holiday.month:02} ● {holiday.name}\n')
     
+    if not at_least_one_found:
+        message_text: str = 'Праздников с таким именем нет.'
+    elif len(holidays) > 30:
+        message_text: str = 'Пожалуйста, введите более точное название.'
+    else:
+        message_text: str = 'Праздники с таким именем:\n' + ''.join(holidays)
+
     try:
-        for msgtext in message_text:
-            await message.answer(text=msgtext)
+        await message.answer(text=message_text)
     except:
         pass
 

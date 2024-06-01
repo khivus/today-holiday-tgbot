@@ -26,15 +26,15 @@ def get_holiday_message(page_index: int, pages: list[str], date: Date | None = N
     }
 
     max_index = len(pages)
-    lbreak: str = '\n'
-    msg_start = f'Праздники на {weekdays[weekday]} {date.day:02}.{date.month:02}:\n{lbreak:->50}'
-    msg_end = f'{lbreak:->50}Страница {page_index + 1}/{max_index}'
+    endl: str = '\n'
+    msg_start = f'Праздники на {weekdays[weekday]} {date.day:02}.{date.month:02}:\n{endl:->50}'
+    msg_end = f'{endl:->50}Страница {page_index + 1}/{max_index}'
     page = pages[page_index]
     message = msg_start + page + msg_end
     return message
 
 
-async def build_pages(date: Date | None = None):
+async def build_pages(date: Date | None = None) -> list[str]:
     CHUNK_SIZE = 13
     CHUNK_OVERHEAD = 6
     

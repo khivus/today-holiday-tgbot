@@ -25,8 +25,8 @@ async def main():
         with open('daily_stats.json', 'w') as file:
             json.dump(daily_json, file)
     
-    dp.include_router(main_router)
     dp.include_router(admin_router)
+    dp.include_router(main_router)
 
     asyncio.create_task(scheduler())
 
