@@ -22,6 +22,8 @@ async def build_and_send(message: types.Message, date: Date | None = None) -> No
 
 @main_router.message()
 async def process_any_message(message: types.Message) -> None:
+    if message.text == None:
+        return
     is_group_in_db(chat_id=message.chat.id)
     tnow = datetime.datetime.now(tz=tzinfo)
     weekdays: list = [
@@ -41,14 +43,13 @@ async def process_any_message(message: types.Message) -> None:
         'позавчера' : -2
     }
 
-    if message.text.lower in days:
-        new_date = tnow + datetime.timedelta(days=days[message.text])
+    if message.text.lower() in days:
+        new_date = tnow + datetime.timedelta(days=days[message.text.lower()])
         date = Date(day=new_date.day, month=new_date.month)
         await build_and_send(message=message, date=date)
 
-    elif message.text.lower in weekdays:
-        weekday_index = weekdays.index(message.text)
-        
+    elif message.text.lower() in weekdays:
+        weekday_index = weekdays.index(message.text.lower())
         weekday = tnow.weekday()
 
         if weekday > weekday_index:
@@ -59,7 +60,7 @@ async def process_any_message(message: types.Message) -> None:
         date = Date(day=new_date.day, month=new_date.month)
         await build_and_send(message=message, date=date)
 
-    elif message.text and '.' in message.text:
+    elif '.' in message.text:
         try:
             raw_date: list = message.text.split('.')
             raw_date = [int(i) for i in raw_date]

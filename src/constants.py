@@ -8,7 +8,7 @@ from sqlmodel import create_engine
 from src.config import Config
 
 # TODO Don't forget to change version!
-VERSION = 'v1.16.1'
+VERSION = 'v1.16.2'
 
 # TODO Add comments to code D:
 # TODO Add inline query commands /today, /tomorrow, /find (I don't want to do this :<)
