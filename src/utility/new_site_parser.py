@@ -48,7 +48,7 @@ async def parse_all_site_pages(start_month: int = 1) -> None:
 
 def filter_holiday(tags: list) -> bool:
     filterd_tags = tags.copy()
-    filter_tags = ['Народные', 'Церковные', 'Православные', 'Католические', 'Национальные',
+    filter_tags = ['Народные', 'Церковные', 'Православные', 'Католические', 'Национальные', 'Праздники Украины',
                     'Лютеранские', 'Конституционные', 'Дни памяти', 'Посты', 'Мусульманские', 'Армейские']
     for tag in tags:
         if tag in filter_tags:
@@ -77,33 +77,37 @@ async def parse_site_page(date: Date | None = None) -> bool:
     soup = BeautifulSoup(body, 'html.parser')
     mainzona = soup.find('div', id='mainzona')
     holidays: list = []
-    for bloktxt in mainzona:
-        tags = []
-        try:
-            name = bloktxt.find('h4').text
-            bloktxt_left = bloktxt.find('div', id='bloktxt_left')
-            htmltags = bloktxt_left.find_all('a')
-            for tag in htmltags:
-                tags.append(tag.text)
-            holidays.append([name, tags])
-        except:
-            continue
+    try:
+        for bloktxt in mainzona:
+            tags = []
+            try:
+                name = bloktxt.find('h4').text
+                bloktxt_left = bloktxt.find('div', id='bloktxt_left')
+                htmltags = bloktxt_left.find_all('a')
+                for tag in htmltags:
+                    tags.append(tag.text)
+                holidays.append([name, tags])
+            except:
+                continue
+        
+        filtered_holidays = holidays.copy()
+        for holiday in holidays:
+            if filter_holiday(holiday[1]):
+                filtered_holidays.remove(holiday)
     
-    filtered_holidays = holidays.copy()
-    for holiday in holidays:
-        if filter_holiday(holiday[1]):
-            filtered_holidays.remove(holiday)
-    
-    with Session(engine) as session:
-        results = session.exec(select(Holiday).where(Holiday.day == date.day).where(Holiday.month == date.month))
-    
-        for saved_holiday in results:
-            session.delete(saved_holiday)
-            
-        for pending_holiday in filtered_holidays:
-            holiday = Holiday(name=pending_holiday[0], day=date.day, month=date.month)
-            session.add(holiday)
-            
-        session.commit()
+        with Session(engine) as session:
+            results = session.exec(select(Holiday).where(Holiday.day == date.day).where(Holiday.month == date.month))
+        
+            for saved_holiday in results:
+                session.delete(saved_holiday)
+                
+            for pending_holiday in filtered_holidays:
+                holiday = Holiday(name=pending_holiday[0], day=date.day, month=date.month)
+                session.add(holiday)
+                
+            session.commit()
+
+    except TypeError as e:
+        log.error(f'{e} | Can\'t parse site!')
     
     return True
