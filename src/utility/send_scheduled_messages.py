@@ -1,4 +1,5 @@
 import datetime
+import traceback
 import logging as log
 
 from sqlmodel import Session, select
@@ -40,6 +41,14 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
                     await bot.send_message(chat_id=e.migrate_to_chat_id, text=message_text, reply_markup=keyboard)
             except exceptions.TelegramAPIError as e:
                 log.error(f'{e.method}: {e.message}')
+                continue
+            except Exception as e:
+                # chat.mailing_enabled = False
+                # session.add(chat)
+                error_type = type(e).__name__
+                log.error(f'Error happened in chat {chat.id}: {error_type} - {e}')
+                log.error(traceback.format_exc())
+                # log.error(f'Unknown error happened, mailing for chat {chat.id} disabled.')
                 continue
             
             session.commit()
