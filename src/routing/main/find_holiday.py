@@ -15,7 +15,6 @@ from src.constants import Date, engine
 from src.keyboards.find_holiday import FindHolidayCallbackData, FindType, build_find_holiday_keyboard
 from src.routers import main_router
 from src.utility.chat_check import is_group_in_db
-from src.utility.new_site_parser import parse_site_page
 from src.utility.page_builder import build_pages, get_holiday_message
 
 
@@ -104,7 +103,6 @@ async def process_choose_day(query: types.CallbackQuery, callback_data: FindDayC
         return
     
     date = Date(day=callback_data.chosen_day, month=callback_data.chosen_month)
-    await parse_site_page(date=date)
     pages = await build_pages(date=date)
     message_text = get_holiday_message(page_index=0, pages=pages, date=date)
     keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages), date=date)
