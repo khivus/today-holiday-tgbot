@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 from src.constants import engine
 from src.keyboards.hours import HourCallbackData, build_hours_keyboard
 from src.keyboards.settings import SettingType, SettingsCallbackData, build_settings_keyboard
+from src.keyboards.timezone import TimezoneCallbackData, build_timezone_keyboard
 from src.models.chat import Chat
 from src.routers import main_router
 from src.routing.main.settings import get_text
@@ -26,9 +27,14 @@ async def process_setting_callback(query: types.CallbackQuery, callback_data: Se
             msg = 'Выберите час в который вы хотите получать рассылку:'
             reply_markup = build_hours_keyboard()
 
+        elif callback_data.type == SettingType.TIMEZONE:
+            msg = "Выберите часовой пояс для получения рассылки:"
+            reply_markup = build_timezone_keyboard()
+
         elif callback_data.type == SettingType.RESET:
             chat.mailing_enabled = False
             chat.mailing_time = 8
+            chat.timezone = 3
             msg = get_text(additional_text='Все настройки были сброшены до заводских.\n', chat=chat)
         
         else:
@@ -55,7 +61,7 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(Chat.id == query.message.chat.id)).one()
         
-        if hour == 24: # If you go back to settings
+        if hour > 23 or hour < 0: # If you go back to settings + safety check
             msg = get_text(chat=chat)
         else:
             chat.mailing_time = hour
@@ -66,6 +72,34 @@ async def process_hours_callback(query: types.CallbackQuery, callback_data: Hour
         session.add(chat)
         session.commit()
             
+    reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
+
+    try:
+        await query.message.edit_text(text=msg, reply_markup=reply_markup)
+    except:
+        pass
+
+
+@main_router.callback_query(TimezoneCallbackData.filter())
+async def process_timezone_callback(query: types.CallbackQuery, callback_data: TimezoneCallbackData):
+    is_group_in_db(chat_id=query.message.chat.id)
+
+    timezone = callback_data.chosen_timezone
+
+    with Session(engine) as session:
+        chat = session.exec(select(Chat).where(Chat.id == query.message.chat.id)).one()
+
+        if timezone < -12 and timezone > 12:  # If you go back to settings + safety check
+            msg = get_text(chat=chat)
+        else:
+            chat.timezone = timezone
+            session.add(chat)
+            session.commit()
+            msg = get_text(additional_text=f'Часовой пояс был изменен на: <code>{chat.timezone}</code>.\n', chat=chat)
+
+        session.add(chat)
+        session.commit()
+
     reply_markup = build_settings_keyboard(chat_id=query.message.chat.id)
 
     try:

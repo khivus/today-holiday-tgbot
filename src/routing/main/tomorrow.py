@@ -7,17 +7,18 @@ from sqlmodel import Session, select
 from src.keyboards.page_change import build_pages_keyboard
 from src.models.chat import Chat
 from src.utility.chat_check import is_group_in_db
+from src.utility.chat_timezone import get_chat_timezone
 from src.utility.json_update import json_update
 from src.utility.page_builder import build_pages, get_holiday_message
 from src.routers import main_router
-from src.constants import engine, tzinfo, Date
+from src.constants import engine, Date
         
 
 @main_router.message(Command('tomorrow'))
 async def process_tomorrow(message: types.Message) -> None:
     is_group_in_db(chat_id=message.chat.id)
     
-    tnow = datetime.datetime.now(tz=tzinfo)
+    tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=message.chat.id))
     tomorrow = tnow + datetime.timedelta(days=1)
     date = Date(day=tomorrow.day, month=tomorrow.month)
     

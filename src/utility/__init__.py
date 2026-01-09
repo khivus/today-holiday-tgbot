@@ -3,5 +3,6 @@ from . import (
     send_scheduled_messages,
     chat_check,
     json_update,
-    calculate_movable_dates
+    calculate_movable_dates,
+    chat_timezone
 )
