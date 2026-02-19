@@ -10,7 +10,7 @@ from src.constants import engine
 @admin_router.message(Command('remove_holiday'))
 async def process_remove_holiday(message: types.Message) -> None:
 
-    holiday_name = message.text.removeprefix('/remove_holiday ').strip()
+    holiday_name = message.text.removeprefix('/remove_holiday').strip()
     
     if not holiday_name:
         await message.answer(text="Пожалуйста, укажите название праздника для удаления.")

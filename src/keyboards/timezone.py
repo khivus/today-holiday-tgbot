@@ -11,6 +11,6 @@ def build_timezone_keyboard():
         builder.button(text=f'{i}', callback_data=TimezoneCallbackData(chosen_timezone=i))
     builder.button(text='↩️ Вернуться к настройкам', callback_data=TimezoneCallbackData(chosen_timezone=13))
 
-    builder.adjust(9, 9, 9, 1)
+    builder.adjust(7, 7, 7, 6, 1)
 
     return builder.as_markup()

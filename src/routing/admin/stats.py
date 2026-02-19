@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 from src.models.chat import Chat
 from src.models.holiday import Holiday
 from src.routers import admin_router
-from src.constants import VERSION, engine, tzinfo
+from src.constants import VERSION, engine, tzinfo_msk
 
 
 @admin_router.message(Command('stats'))
@@ -18,7 +18,7 @@ async def process_stats(message: types.Message) -> None:
     total_with_mailing = 0
     total_holidays = 0
     
-    tnow = datetime.datetime.now(tz=tzinfo)
+    tnow = datetime.datetime.now(tz=tzinfo_msk)
     
     with Session(engine) as session:
         holidays = session.exec(select(Holiday)).all()

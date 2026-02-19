@@ -7,10 +7,15 @@ from src.routers import admin_router
 from src.constants import engine
 
 
-@admin_router.message(Command('remove_holiday'))
+@admin_router.message(Command('add_holiday'))
 async def process_remove_holiday(message: types.Message) -> None:
 
-    holiday_raw = message.text.removeprefix('/remove_holiday ').strip()
+    holiday_raw = message.text.removeprefix('/add_holiday').strip()
+
+    if not holiday_raw:
+        await message.answer(text="Что добавить то?")
+        return
+
     holiday_name, holiday_date_str = holiday_raw.split('=')
     holiday_name = holiday_name.strip()
     holiday_date_str = holiday_date_str.strip()

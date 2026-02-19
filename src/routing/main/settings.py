@@ -14,6 +14,7 @@ def get_text(chat: Chat, additional_text: str = '') -> str:
         '<b>Ваши настройки</b>\n' \
         f'- Рассылка включена: <code>{"Да" if chat.mailing_enabled else "Нет"}</code>\n' \
         f'- Время рассылки: <code>{chat.mailing_time}:00</code>\n' \
+        f'- Часовой пояс: <code>{chat.timezone}</code>\n' \
         '\n' \
         'Если хотите изменить какую-то из настроек, нажмите на любую кнопку ниже.'
 

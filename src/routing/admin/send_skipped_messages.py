@@ -4,13 +4,13 @@ from aiogram import types
 from aiogram.filters import Command
 
 from src.routers import admin_router
-from src.constants import tzinfo
+from src.constants import tzinfo_msk
 from src.utility.send_scheduled_messages import send_scheluded_holidays_message
 
 
 @admin_router.message(Command('send_skipped_messages'))
 async def process_send_skipped_messages(message: types.Message) -> None:
-    tnow = datetime.datetime.now(tz=tzinfo)
+    tnow = datetime.datetime.now(tz=tzinfo_msk)
     hour = tnow.hour
     message_text = ''
     

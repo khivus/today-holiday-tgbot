@@ -27,6 +27,6 @@ def build_settings_keyboard(chat_id: int):
         builder.button(text=f'🌍 Часовой пояс: UTC{"+" if chat.timezone >=0 else "-"}{chat.timezone}', callback_data=SettingsCallbackData(type=SettingType.TIMEZONE))
         builder.button(text='🔄 Сбросить настройки до заводских', callback_data=SettingsCallbackData(type=SettingType.RESET))
 
-    builder.adjust(3, 1)
+    builder.adjust(1, 2, 1)
 
     return builder.as_markup()
