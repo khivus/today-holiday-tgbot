@@ -3,7 +3,7 @@ import datetime
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
-from src.constants import tzinfo_0, Date
+from src.constants import tzinfo, Date
 from src.utility.chat_timezone import get_chat_timezone
 
 class PagesCallbackData(CallbackData, prefix='page'):
@@ -16,7 +16,7 @@ def build_pages_keyboard(current_page_index: int, max_page_index: int = 4, date:
         return None
     
     if not date:
-        tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=chat_id)) if chat_id else datetime.datetime.now(tz=tzinfo_0)
+        tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=chat_id)) if chat_id else datetime.datetime.now(tz=tzinfo)
         date = Date(day=tnow.day, month=tnow.month)
         
     builder = InlineKeyboardBuilder()

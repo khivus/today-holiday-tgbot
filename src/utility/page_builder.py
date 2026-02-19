@@ -3,13 +3,13 @@ import datetime
 from sqlmodel import Session, select
 
 from src.models.holiday import Holiday
-from src.constants import engine, tzinfo_0, Date
+from src.constants import engine, tzinfo, Date
 from src.utility.chat_timezone import get_chat_timezone
 
 
 def get_holiday_message(page_index: int, pages: list[str], date: Date | None = None, chat_id: int | None = None) -> str:
     
-    tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=chat_id)) if chat_id else datetime.datetime.now(tz=tzinfo_0)
+    tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=chat_id)) if chat_id else datetime.datetime.now(tz=tzinfo)
 
     if not date:
         date = Date(day=tnow.day, month=tnow.month)
@@ -41,7 +41,7 @@ async def build_pages(date: Date | None = None, chat_id: int | None = None) -> l
     CHUNK_OVERHEAD = 6
     
     if not date:
-        tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=chat_id)) if chat_id else datetime.datetime.now(tz=tzinfo_0)
+        tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=chat_id)) if chat_id else datetime.datetime.now(tz=tzinfo)
         date = Date(day=tnow.day, month=tnow.month)
     
     holidays: list = []

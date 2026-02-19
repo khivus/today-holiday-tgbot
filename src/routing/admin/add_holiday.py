@@ -5,7 +5,7 @@ from sqlmodel import Session
 
 from src.models.holiday import Holiday
 from src.routers import admin_router
-from src.constants import engine, tzinfo_msk, Date
+from src.constants import engine, tzinfo, Date
 
 
 @admin_router.message(Command('add_holiday'))
@@ -25,7 +25,7 @@ async def process_remove_holiday(message: types.Message) -> None:
         date = Date(day=holiday_date[0], month=holiday_date[1])
     else:
         holiday_name = holiday_raw
-        tnow = datetime.datetime.now(tz=tzinfo_msk)
+        tnow = datetime.datetime.now(tz=tzinfo)
         date = Date(day=tnow.day, month=tnow.month)
 
     if not holiday_name:

@@ -7,7 +7,7 @@ from sqlmodel import create_engine
 
 from src.config import Config
 
-VERSION = 'v1.16.8'
+VERSION = 'v1.16.9'
 
 ADMIN = 897276284 # ADMIN ID
 
@@ -38,7 +38,4 @@ class EventFilter(logging.Filter):
     def filter(self, record):
         return self.event_name in record.getMessage()
 
-tzinfo_0 = datetime.timezone(datetime.timedelta(hours=0))
-
-timezone_offset = +3.0  # GMT+3 MSK Time
-tzinfo_msk = datetime.timezone(datetime.timedelta(hours=timezone_offset))
+tzinfo = datetime.timezone(datetime.timedelta(hours=0))
