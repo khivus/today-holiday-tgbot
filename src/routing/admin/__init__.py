@@ -5,5 +5,7 @@ from . import (
     daily_stats,
     create_db_backup,
     send_skipped_messages,
-    admin_help
+    admin_help,
+    add_holiday,
+    remove_holiday
 )

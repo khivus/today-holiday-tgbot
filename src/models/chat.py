@@ -8,3 +8,4 @@ class Chat(SQLModel, table=True):
     mailing_enabled: bool = Field(default=False, index=True)
     mailing_time: int = Field(default=8)
     uses: int = Field(default=0)
+    timezone: int = Field(default=3)  # GMT+3 MSK Time

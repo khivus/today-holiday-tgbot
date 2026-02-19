@@ -18,9 +18,9 @@ async def process_holidays(message: types.Message) -> None:
     with Session(engine) as session:
         chat = session.exec(select(Chat).where(Chat.id == message.chat.id)).one()
 
-        pages = await build_pages()
-        message_text = get_holiday_message(page_index=0, pages=pages)
-        keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages))
+        pages = await build_pages(chat_id=message.chat.id)
+        message_text = get_holiday_message(page_index=0, pages=pages, chat_id=message.chat.id)
+        keyboard = build_pages_keyboard(current_page_index=0, max_page_index=len(pages), chat_id=message.chat.id)
 
         try:
             await message.answer(text=message_text, reply_markup=keyboard)

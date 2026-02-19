@@ -7,11 +7,7 @@ from sqlmodel import create_engine
 
 from src.config import Config
 
-# TODO Don't forget to change version!
-VERSION = 'v1.16.3'
-
-# TODO Add comments to code D:
-# TODO Add inline query commands /today, /tomorrow, /find (I don't want to do this :<)
+VERSION = 'v1.16.6'
 
 ADMIN = 897276284 # ADMIN ID
 
@@ -42,5 +38,7 @@ class EventFilter(logging.Filter):
     def filter(self, record):
         return self.event_name in record.getMessage()
 
+tzinfo_0 = datetime.timezone(datetime.timedelta(hours=0))
+
 timezone_offset = +3.0  # GMT+3 MSK Time
-tzinfo = datetime.timezone(datetime.timedelta(hours=timezone_offset))
+tzinfo_msk = datetime.timezone(datetime.timedelta(hours=timezone_offset))

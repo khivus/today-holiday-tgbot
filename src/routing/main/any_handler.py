@@ -2,11 +2,12 @@ import datetime
 
 from aiogram import types
 
-from src.constants import Date, tzinfo
+from src.constants import Date
 from src.keyboards.page_change import build_pages_keyboard
 from src.routers import main_router
 from src.utility.chat_check import is_group_in_db
 from src.utility.page_builder import build_pages, get_holiday_message
+from src.utility.chat_timezone import get_chat_timezone
 
 
 async def build_and_send(message: types.Message, date: Date | None = None) -> None:
@@ -25,7 +26,7 @@ async def process_any_message(message: types.Message) -> None:
     if message.text == None:
         return
     is_group_in_db(chat_id=message.chat.id)
-    tnow = datetime.datetime.now(tz=tzinfo)
+    tnow = datetime.datetime.now(tz=get_chat_timezone(chat_id=message.chat.id))
     weekdays: list = [
         'понедельник',
         'вторник',
