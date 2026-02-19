@@ -2,7 +2,7 @@ import datetime
 
 from sqlmodel import Session, select
 
-from src.constants import engine, tzinfo_msk, Date
+from src.constants import engine, tzinfo, Date
 from src.models.holiday import Holiday
 
 def calculate_from_easter(easter_date: datetime.date, delta_days: int = 0, delta_weeks: int = 0) -> Date:
@@ -15,7 +15,7 @@ async def calculate_movable_dates(year : int | None = None) -> None:
     movable_holidays: list = []
 
     if year is None:
-        tnow = datetime.datetime.now(tz=tzinfo_msk)
+        tnow = datetime.datetime.now(tz=tzinfo)
         year = tnow.year
     
     # Пасха (Велик день)

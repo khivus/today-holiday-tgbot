@@ -7,11 +7,11 @@ from src.routers import admin_router
 @admin_router.message(Command('ahelp'))
 async def process_send_skipped_messages(message: types.Message) -> None:
     message_text = 'Список админских команд:\n' \
-                '/send_skipped_messages\n' \
+                '/send_skipped_messages (учитывай что тз UTC+0)\n' \
                 '/stats\n' \
                 '/dstats\n' \
                 '/run_parser {date(optional)}\n' \
-                '/add_holiday {name}={dd.mm}\n' \
+                '/add_holiday {name}={dd.mm} (дата не обязательна, но учитывай что тз UTC+0)\n' \
                 '/remove_holiday {name}\n' \
                 '/create_backup\n'
     
