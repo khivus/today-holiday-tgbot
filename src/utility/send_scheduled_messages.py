@@ -24,7 +24,14 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
         send_to_chats: list[Chat] = []
         chats = session.exec(select(Chat).where(Chat.mailing_enabled)).all()
         for chat in chats:
-            if chat.mailing_time - chat.timezone == hour:
+
+            chat_hour = chat.mailing_time - chat.timezone
+            if chat_hour < 0:
+                chat_hour += 24
+            elif chat_hour >= 24:
+                chat_hour -= 24
+
+            if chat_hour == hour:
                 send_to_chats.append(chat)
 
         for chat in send_to_chats:
