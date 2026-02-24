@@ -7,7 +7,7 @@ from sqlmodel import create_engine
 
 from src.config import Config
 
-VERSION = 'v1.16.10'
+VERSION = 'v1.16.11'
 
 ADMIN = 897276284 # ADMIN ID
 

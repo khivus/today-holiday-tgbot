@@ -71,6 +71,6 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
             session.commit()
     
     json_update('succeeded_messages', success)
-    json_update('all_scheduled_messages', len(chats))
+    json_update('all_scheduled_messages', len(send_to_chats))
 
-    return [success, len(chats)]
+    return [success, len(send_to_chats)]
