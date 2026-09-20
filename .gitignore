@@ -2,7 +2,11 @@
 resources/
 backups/
 .db
+*.db
+*.db-*
+data/
 daily_stats.json
+*.env
 
 
 # Byte-compiled / optimized / DLL files

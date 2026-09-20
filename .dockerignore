@@ -1,0 +1,10 @@
+*
+!Dockerfile
+!requirements.txt
+!docker-entrypoint.sh
+!src/
+!src/**
+!parsers/
+!parsers/**
+**/__pycache__/
+**/*.pyc
