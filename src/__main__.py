@@ -4,16 +4,15 @@ import json
 
 from sqlmodel import SQLModel
 
-from src.constants import EventFilter, dp, bot, engine, daily_json
+from src.constants import dp, bot, engine, daily_json
 from src.routers import main_router, admin_router
 from src.models import __init__
 from src.routing.admin.start_message import send_successful_start_message
 from src.scheduler import scheduler
 
 
-logging.basicConfig(level=logging.ERROR)
-logger = logging.getLogger()
-logger.addFilter(EventFilter('Failed to fetch updates'))
+logging.basicConfig(level=logging.WARNING,
+                    format='%(asctime)s %(levelname)s %(name)s: %(message)s')
 
 
 async def main():
