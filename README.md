@@ -62,6 +62,17 @@ polling, so no inbound ports, domain, or reverse proxy are needed. Run only one
 instance per bot token. Scheduling uses UTC internally and the per-chat timezone
 saved in the database.
 
+Temporary Telegram disconnections and DNS failures during polling are logged as
+warnings and retried automatically with backoff. A `Connection established` log
+confirms recovery. Scheduled sends also retry temporary network/server failures
+and rate limits. Successful scheduled-send summaries use the INFO level and are
+hidden by the default WARNING log level.
+
+If Telegram returns `chat not found`, the inaccessible chat is removed from the
+database. If it returns `TOPIC_CLOSED`, mailing is disabled while the chat's
+settings are kept. Reopen the topic, then enable mailing again through
+`/settings`. Other bad requests remain errors and keep the subscription intact.
+
 Docker stores the database and `daily_stats.json` in `./data`, so they survive
 container rebuilds and removal. This directory and `.env` are excluded from Git
 and the Docker image.

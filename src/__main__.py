@@ -9,10 +9,12 @@ from src.routers import main_router, admin_router
 from src.models import __init__
 from src.routing.admin.start_message import send_successful_start_message
 from src.scheduler import scheduler
+from src.utility.polling_logging import configure_polling_logging
 
 
 logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s %(levelname)s %(name)s: %(message)s')
+configure_polling_logging()
 
 
 async def main():

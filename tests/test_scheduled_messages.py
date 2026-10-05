@@ -6,6 +6,7 @@ All Telegram calls are simulated and databases are temporary/in memory.
 import asyncio
 import datetime
 import importlib.util
+import logging
 import sys
 import types
 import unittest
@@ -13,8 +14,9 @@ from collections import Counter
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
-from aiogram import exceptions
-from aiogram.methods import SendMessage
+from aiogram import Dispatcher, exceptions
+from aiogram.methods import GetUpdates, SendMessage
+from aiogram.types import Update
 from sqlmodel import Session, SQLModel, create_engine
 
 
@@ -47,6 +49,7 @@ sys.modules['src.constants'] = constants
 chat_module = load_module('src.models.chat', 'src/models/chat.py')
 load_module('src.models.holiday', 'src/models/holiday.py')
 sender = load_module('src.utility.send_scheduled_messages', 'src/utility/send_scheduled_messages.py')
+polling_logging = load_module('src.utility.polling_logging', 'src/utility/polling_logging.py')
 Chat = chat_module.Chat
 
 for name in ('daily_stats', 'create_db_backup'):
@@ -139,12 +142,81 @@ class ScheduledMessagesTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_bad_request_is_retained_and_reason_is_logged(self):
         self.add_chat()
-        self.bot.send_message.side_effect = self.error(exceptions.TelegramBadRequest, message='chat not found')
+        self.bot.send_message.side_effect = self.error(exceptions.TelegramBadRequest, message='Bad Request: message is too long')
         with self.assertLogs(level='ERROR') as logs:
             self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [0, 1])
-        self.assertIn('reason=chat not found', '\n'.join(logs.output))
+        self.assertIn('reason=Bad Request: message is too long', '\n'.join(logs.output))
         self.assertIsNotNone(self.get_chat(1))
+        self.assertTrue(self.get_chat(1).mailing_enabled)
         self.assertEqual(self.bot.send_message.await_count, 1)
+
+    async def test_chat_not_found_is_removed_and_batch_continues(self):
+        for reason in ('chat not found', 'Bad Request: chat not found'):
+            with self.subTest(reason=reason):
+                self.add_chat()
+                self.add_chat(2)
+                self.bot.send_message.reset_mock()
+                self.bot.send_message.side_effect = [
+                    self.error(exceptions.TelegramBadRequest, message=reason), None]
+                with self.assertLogs(level='WARNING') as logs:
+                    self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [1, 2])
+                self.assertIsNone(self.get_chat(1))
+                self.assertEqual(self.get_chat(2).uses, 1)
+                self.assertEqual(self.bot.send_message.await_count, 2)
+                self.assertIn('removed=1 disabled=0 failures={}', '\n'.join(logs.output))
+                self.bot.send_message.side_effect = None
+                self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [1, 1])
+                with Session(self.engine) as session:
+                    session.delete(session.get(Chat, 2))
+                    session.commit()
+
+    async def test_closed_topic_pauses_mailing_and_preserves_settings(self):
+        self.add_chat(uses=7)
+        self.add_chat(2)
+        self.bot.send_message.side_effect = [
+            self.error(exceptions.TelegramBadRequest, message='Bad Request: TOPIC_CLOSED'), None]
+        with self.assertLogs(level='WARNING') as logs:
+            self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [1, 2])
+        chat = self.get_chat(1)
+        self.assertFalse(chat.mailing_enabled)
+        self.assertEqual((chat.uses, chat.mailing_time, chat.timezone), (7, 8, 3))
+        self.assertEqual(self.stats['succeeded_messages'], 1)
+        self.assertEqual(self.stats['all_scheduled_messages'], 2)
+        self.assertIn('removed=0 disabled=1 failures={}', '\n'.join(logs.output))
+        self.bot.send_message.side_effect = None
+        self.bot.send_message.reset_mock()
+        self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [1, 1])
+        self.assertEqual(self.bot.send_message.call_args.kwargs['chat_id'], 2)
+        with Session(self.engine) as session:
+            chat = session.get(Chat, 1)
+            chat.mailing_enabled = True
+            session.add(chat)
+            session.commit()
+        self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [2, 2])
+        self.assertEqual(self.get_chat(1).uses, 8)
+
+    async def test_bad_requests_after_migration_use_new_chat(self):
+        for reason, removed in (('Bad Request: chat not found', True), ('Bad Request: TOPIC_CLOSED', False)):
+            with self.subTest(reason=reason):
+                self.add_chat()
+                self.bot.send_message.side_effect = [
+                    self.error(exceptions.TelegramMigrateToChat, migrate_to_chat_id=-1001),
+                    self.error(exceptions.TelegramBadRequest, chat_id=-1001, message=reason)]
+                with self.assertLogs(level='WARNING') as logs:
+                    self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [0, 1])
+                self.assertIsNone(self.get_chat(1))
+                self.assertIn('chat_id=-1001 reason=', '\n'.join(logs.output))
+                migrated = self.get_chat(-1001)
+                if removed:
+                    self.assertIsNone(migrated)
+                else:
+                    self.assertFalse(migrated.mailing_enabled)
+
+    async def test_successful_summary_is_info(self):
+        self.add_chat()
+        with self.assertLogs(level='INFO') as logs:
+            self.assertEqual(await sender.send_scheluded_holidays_message(hour=5), [1, 1])
+        self.assertEqual([record.levelno for record in logs.records], [logging.INFO])
 
     async def test_forbidden_chat_is_deleted_and_not_scheduled_again(self):
         self.add_chat()
@@ -201,6 +273,58 @@ class ScheduledMessagesTests(unittest.IsolatedAsyncioTestCase):
         migrated = self.get_chat(-1)
         self.assertTrue(migrated.mailing_enabled)
         self.assertEqual((migrated.mailing_time, migrated.timezone, migrated.uses), (8, 3, 6))
+
+
+class PollingLoggingTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self.logger = logging.getLogger('aiogram.dispatcher')
+        self.addCleanup(self.logger.setLevel, self.logger.level)
+        self.addCleanup(setattr, self.logger, 'filters', self.logger.filters[:])
+        polling_logging.configure_polling_logging()
+
+    async def test_network_errors_retry_and_recover_without_error_logs(self):
+        bot = AsyncMock()
+        bot.id = 123
+        bot.session.timeout = 60
+        method = GetUpdates()
+        bot.side_effect = [
+            exceptions.TelegramNetworkError(method=method, message='ServerDisconnectedError: Server disconnected'),
+            exceptions.TelegramNetworkError(method=method, message='ClientConnectorError: Temporary failure in name resolution'),
+            [Update(update_id=42)]]
+        updates = Dispatcher._listen_updates(bot)
+        try:
+            with patch('aiogram.utils.backoff.Backoff.asleep', new_callable=AsyncMock) as sleep, \
+                    self.assertLogs('aiogram.dispatcher', level='INFO') as logs:
+                self.assertEqual((await anext(updates)).update_id, 42)
+            self.assertEqual(bot.await_count, 3)
+            self.assertEqual(sleep.await_count, 2)
+            self.assertFalse(any(record.levelno >= logging.ERROR for record in logs.records))
+            self.assertIn('ServerDisconnectedError', '\n'.join(logs.output))
+            self.assertIn('Temporary failure in name resolution', '\n'.join(logs.output))
+            self.assertIn('Connection established', '\n'.join(logs.output))
+        finally:
+            await updates.aclose()
+
+    async def test_server_error_is_warning_but_conflict_remains_error(self):
+        method = GetUpdates()
+        for kind, level in ((exceptions.TelegramServerError, logging.WARNING),
+                            (exceptions.TelegramConflictError, logging.ERROR)):
+            with self.subTest(kind=kind), self.assertLogs('aiogram.dispatcher', level='INFO') as logs:
+                error = kind(method=method, message='test failure')
+                self.logger.error('Failed to fetch updates - %s: %s', type(error).__name__, error)
+            self.assertEqual(logs.records[0].levelno, level)
+
+    async def test_unrelated_dispatcher_error_keeps_severity(self):
+        error = exceptions.TelegramNetworkError(method=GetUpdates(), message='offline')
+        with self.assertLogs('aiogram.dispatcher', level='INFO') as logs:
+            self.logger.error('Unrelated error: %s', error)
+        self.assertEqual(logs.records[0].levelno, logging.ERROR)
+
+    async def test_configuration_keeps_recovery_visible_and_is_idempotent(self):
+        polling_logging.configure_polling_logging()
+        self.assertEqual(self.logger.level, logging.INFO)
+        self.assertEqual(sum(isinstance(item, polling_logging.TransientPollingErrorFilter)
+                             for item in self.logger.filters), 1)
 
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):

@@ -36,6 +36,7 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
         hour = datetime.datetime.now(tz=tzinfo).hour
     success = 0
     removed = 0
+    disabled = 0
     failures = Counter()
 
     with Session(engine) as session:
@@ -96,6 +97,25 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
                 session.commit()
                 removed += 1
                 log.warning('Scheduled chat removed: chat_id=%s reason=%s', chat.id, e.message)
+            except exceptions.TelegramBadRequest as e:
+                reason = e.message.removeprefix('Bad Request:').strip().casefold()
+                if reason == 'chat not found':
+                    session.delete(chat)
+                    session.commit()
+                    removed += 1
+                    log.warning('Scheduled chat removed: chat_id=%s reason=%s', chat.id, e.message)
+                elif reason == 'topic_closed':
+                    # The topic can reopen later. Preserve the chat and settings
+                    # so mailing can be enabled again through /settings.
+                    chat.mailing_enabled = False
+                    session.add(chat)
+                    session.commit()
+                    disabled += 1
+                    log.warning('Scheduled mailing disabled: chat_id=%s reason=%s', chat.id, e.message)
+                else:
+                    failures[type(e).__name__] += 1
+                    log.error('Scheduled send failed: chat_id=%s hour=%s error=%s reason=%s',
+                              chat.id, hour, type(e).__name__, e.message)
             except exceptions.TelegramAPIError as e:
                 failures[type(e).__name__] += 1
                 log.error('Scheduled send failed: chat_id=%s hour=%s error=%s reason=%s',
@@ -106,6 +126,7 @@ async def send_scheluded_holidays_message(hour: int | None = None) -> list:
 
     json_update('succeeded_messages', success)
     json_update('all_scheduled_messages', scheduled)
-    log.warning('Scheduled send summary: hour=%s succeeded=%s scheduled=%s removed=%s failures=%s',
-                hour, success, scheduled, removed, dict(failures))
+    summary_log = log.warning if failures or removed or disabled else log.info
+    summary_log('Scheduled send summary: hour=%s succeeded=%s scheduled=%s removed=%s disabled=%s failures=%s',
+                hour, success, scheduled, removed, disabled, dict(failures))
     return [success, scheduled]
