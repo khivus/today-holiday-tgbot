@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 
 from src.constants import engine, tzinfo, Date
 from src.models.holiday import Holiday
+from src.utility.calculate_secular_dates import calculate_secular_dates, SECULAR_HOLIDAY_ALIASES
 
 def calculate_from_easter(easter_date: datetime.date, delta_days: int = 0, delta_weeks: int = 0) -> Date:
     target_date = easter_date + datetime.timedelta(days=delta_days, weeks=delta_weeks)
@@ -46,11 +47,17 @@ async def calculate_movable_dates(year : int | None = None) -> None:
     movable_holidays.append(["Светлая неделя", calculate_from_easter(easter_date=easter, delta_days=1)])
     movable_holidays.append(["Семик (Зеленые святки)", calculate_from_easter(easter_date=easter, delta_weeks=6, delta_days=4)])
 
+    movable_holidays.extend(
+        (name, Date(day=date.day, month=date.month))
+        for name, date in calculate_secular_dates(year)
+    )
 
     with Session(engine) as session:
         # Удаляем праздники с таким же названием
-        for holiday in movable_holidays:
-            results = session.exec(select(Holiday).where(Holiday.name == holiday[0]))
+        managed_names = [holiday[0] for holiday in movable_holidays]
+        managed_names.extend(SECULAR_HOLIDAY_ALIASES)
+        for name in managed_names:
+            results = session.exec(select(Holiday).where(Holiday.name == name))
             
             for saved_holiday in results:
                 session.delete(saved_holiday)

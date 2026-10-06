@@ -344,7 +344,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertLogs(level='ERROR'):
             clock.now.return_value = now
             with self.assertRaises(asyncio.CancelledError):
-                await scheduler_module.scheduler()
+                await scheduler_module.scheduler(calculated_year=now.year)
         send.assert_awaited_once_with(hour=0)
         backup.assert_awaited_once()
 
@@ -357,7 +357,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertLogs(level='ERROR'):
             clock.now.side_effect = [now, now.replace(hour=6)]
             with self.assertRaises(asyncio.CancelledError):
-                await scheduler_module.scheduler()
+                await scheduler_module.scheduler(calculated_year=now.year)
         self.assertEqual([call.kwargs['hour'] for call in send.await_args_list], [5, 6])
 
 

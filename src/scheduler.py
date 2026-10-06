@@ -9,9 +9,17 @@ from src.utility.calculate_movable_dates import calculate_movable_dates
 from src.constants import tzinfo
 
 
-async def scheduler():
+async def scheduler(calculated_year: int | None = None):
     while True:
         tnow = datetime.datetime.now(tz=tzinfo)
+        if calculated_year != tnow.year:
+            try:
+                await calculate_movable_dates(year=tnow.year)
+            except Exception:
+                log.exception('Scheduled holiday date calculation failed')
+            else:
+                calculated_year = tnow.year
+
         if tnow.minute == 0:
             if tnow.hour == 0:
                 for task in (process_daily_stats, create_db_backup):
@@ -24,11 +32,4 @@ async def scheduler():
             except Exception:
                 log.exception('Scheduled mailing batch failed: hour=%s', tnow.hour)
             await asyncio.sleep(60)
-        if tnow.day == 1 and tnow.month == 1 and tnow.hour == 3 and tnow.minute == 1:
-            try:
-                await calculate_movable_dates()
-            except Exception:
-                log.exception('Scheduled holiday date calculation failed')
-            await asyncio.sleep(60)
-        else:
-            await asyncio.sleep(1)
+        await asyncio.sleep(1)

@@ -1,15 +1,17 @@
 import asyncio
+import datetime
 import logging
 import json
 
 from sqlmodel import SQLModel
 
-from src.constants import dp, bot, engine, daily_json
+from src.constants import dp, bot, engine, daily_json, tzinfo
 from src.routers import main_router, admin_router
 from src.models import __init__
 from src.routing.admin.start_message import send_successful_start_message
 from src.scheduler import scheduler
 from src.utility.polling_logging import configure_polling_logging
+from src.utility.calculate_movable_dates import calculate_movable_dates
 
 
 logging.basicConfig(level=logging.WARNING,
@@ -19,6 +21,8 @@ configure_polling_logging()
 
 async def main():
     SQLModel.metadata.create_all(engine)
+    calculated_year = datetime.datetime.now(tz=tzinfo).year
+    await calculate_movable_dates(year=calculated_year)
     
     try:
         open('daily_stats.json', 'r')
@@ -29,7 +33,7 @@ async def main():
     dp.include_router(admin_router)
     dp.include_router(main_router)
 
-    asyncio.create_task(scheduler())
+    asyncio.create_task(scheduler(calculated_year=calculated_year))
 
     await bot.delete_webhook(drop_pending_updates=True)
     await send_successful_start_message()
